@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     colors: {
+      "black":{
+        900: "black"
+      },
       "lime_green": {
     
         50: "#d0f34e",
@@ -190,6 +193,9 @@ module.exports = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      fontFamily:{
+      'font-int': 'Inter'
+      }
     },
   },
   plugins: [],

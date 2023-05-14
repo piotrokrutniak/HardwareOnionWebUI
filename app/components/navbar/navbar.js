@@ -5,7 +5,7 @@ import { Button, ButtonMain, SvgComponent } from "./navbar.elements";
 
 export default function NavBar(){
     return(
-        <nav className="h-14 max-w-7xl bg-sapphire_blue-900 m-auto">
+        <nav className="sticky top-0 z-50 h-14 max-w-7xl m-auto bg-black-900">
             <div className="px-6 h-14 flex justify-between font-mono text-2xl font-semibold">
                 <div className="flex">
                     <SvgComponent className="h-9 my-auto w-8"/>

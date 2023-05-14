@@ -9,7 +9,7 @@ export function Button({...props}){
 export function ButtonMain({...props}){
     return(
         <Link href={props.url}>
-        <button className="h-10 my-auto ml-5 p-1 px-3 bg-rose-600 bg-turquoise-50 bg-opacity-80 hover:transition-all rounded-md  hover:bg-turquoise-50 hover:bg-opacity-90" > 
+        <button className="h-10 my-auto ml-5 p-1 px-3 bg-rose-600 bg-turquoise-50 bg-opacity-80 hover:transition-all rounded-md  hover:bg-turquoise-50 hover:bg-opacity-90 " > 
             Cart 
             <ShoppingCartSVG className="w-8 h-8 inline ml-2"/> 
         </button>
