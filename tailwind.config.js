@@ -188,6 +188,14 @@ module.exports = {
       },
     } ,
     extend: {
+      gridAutoColumns: {
+        'min-48': 'minmax(192px, 1fr)',
+        
+      },
+      gridTemplateColumns: {
+        'fill-48': 'repeat(auto-fit, minmax(192px,1fr))',
+        'fill-40': 'repeat(auto-fill, 192px)',
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
