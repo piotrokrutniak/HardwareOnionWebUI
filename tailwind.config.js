@@ -189,7 +189,8 @@ module.exports = {
     } ,
     extend: {
       screens:{
-        'xs': '520px',
+        'xs': '580px',
+        '850': '850px',
       },
       minWidth:{
         'mobile': '360px',
