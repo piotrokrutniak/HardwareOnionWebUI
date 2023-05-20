@@ -1,11 +1,30 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Slider from "rc-slider";
 import 'rc-slider/assets/index.css'
 
+async function GetProducts(){
+    let response = await fetch('https://localhost:9001/api/v1/product/3',
+                        {
+                            method: "GET",
+                            mode: 'cors',
+                            headers:{
+                                'Sec-Fetch-Site': 'cross-site',
+                                'Access-Control-Allow-Origin': 'http://localhost:9001/',
+                                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT',
+                            },
+                        }
+    )
+
+    let body = await response.json()          
+
+    //console.log(body.data)
+    return await body
+}
+
 export function FilterSection({...props}){
 
-    let style = props.className ?? 'max-w-full h-full';
+    let style = props.className ?? 'max-w-full h-full'; 
 
     return(
         <div className={`flex ${style}`}>
@@ -40,10 +59,12 @@ export function FilterSection({...props}){
             </div>
             <div className="h-full w-full p-5 bg-cornflower_blue-900 ">
                 <SortSection/>
-                <div className="flex space-x-3 md:space-x-0">
-                <Button className="md:hidden" text="FILTERS" color="bg-cornflower_blue-400" icon={<FilterIcon color="white" fill="none" className="w-5 h-5 inline ml-1 relative"/>}/>
-                <SearchButton text="BROWSE" icon={<SearchIcon color="white" className="w-5 h-5 inline ml-1 relative"/>} color="bg-cornflower_blue-400"/>
+                <div className="flex mb-8 space-x-3 md:space-x-0">
+                <Button className="md:hidden min-w-fit h-14" text="FILTERS" color="bg-cornflower_blue-400" icon={<FilterIcon color="white" fill="none" className="w-5 h-5 inline ml-1 relative"/>}/>
+                <SearchButton text="BROWSE" className={"h-14"} icon={<SearchIcon color="white" className="w-5 h-5 inline ml-1 relative"/>} color="bg-cornflower_blue-400"/>
                 </div>
+
+                <Products/>
             </div>
         </div>
     )
@@ -73,7 +94,7 @@ export function ListMember({...props}){
 export function Button({...props}){
     return(
         <button className={`h-10 block my-auto p-1 px-3 bg-opacity-80 rounded-md mt-8 ${props.color} ${props.className} hover:transition-all hover:bg-opacity-100
-                            max-md:w-1/5 max-md:h-14
+                            max-md:w-1/5 
                             `}> 
             {props.text}{props.icon}
         </button>
@@ -171,6 +192,70 @@ export function SearchButton({...props}){
     )
 }
 
+export function Products({...props}){
+    const [productSet, setProductSet] = useState([])
+    
+    useEffect(() => {
+        let mounted = true
+        GetProducts().then(product => {
+            if(mounted){
+                setProductSet(product.data)
+            }
+        })
+        return () => mounted = false;
+    }, [])
+    
+    console.log(productSet)
+    return(
+        <div className="bg-cornflower_blue-50 w-full h-full bg-opacity-10 p-5 max-xs:p-y max-xs:py-5">
+            <div className="grid grid-flow-row gap-5 auto-cols-min-54 grid-cols-3 
+                            max-xl:grid-cols-2 
+                            max-xs:grid-cols-1 
+                            ">
+                <Product productData={...productSet}/>
+                <Product productData={...productSet}/>
+                <Product productData={...productSet}/>
+                <Product productData={...productSet}/>
+                <Product productData={...productSet}/>
+                <Product productData={...productSet}/>
+                <Product productData={...productSet}/>
+                <Product productData={...productSet}/>
+                <Product productData={...productSet}/>
+                <Product productData={...productSet}/>
+            </div>
+        </div>
+    )
+}
+
+export function Product({...props}){
+
+    let product = props.productData
+
+    return(
+            <div className="bg-black-900 opacity-95 min-w-54 h-80">
+                <div className="w-full bg-black-900 bg-opacity-20 h-48">
+
+                </div>
+                <div className="h-28">
+                    <div className="flex justify-between ">
+                    <div className="h-8 p-2">{product.name}</div>
+                    <div className="p-2">* * * * * </div>
+                    </div>
+                    
+                    <div className="w-full h-6 bg-opacity-95 bg-black-900  p-2 pt-0 pb-1 text-sm">{product.description}</div>
+                    <div className="w-full h-12 p-2 pb-0 flex justify-between">
+                        <div className="text-2xl max-lg:text-xl mb-auto mt-auto">{product.price ?? 0}.00 zł</div>
+                        <Button className='w-28 max-md:w-28 max-md:text-sm mb-auto mt-auto relative' text="Add to cart" color="bg-cornflower_blue-400"/>
+                    </div>
+                </div>
+            </div>
+    )
+}
+
+export function ProductsGrid({...props}){
+
+}
+
 
 const SearchIcon = (props) => (
   <svg
@@ -193,8 +278,6 @@ const SearchIcon = (props) => (
     />
   </svg>
 )
-
-
 
 const FilterIcon  = (props) => (
     <svg

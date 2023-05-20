@@ -188,9 +188,22 @@ module.exports = {
       },
     } ,
     extend: {
+      screens:{
+        'xs': '520px',
+      },
+      minWidth:{
+        'mobile': '360px',
+        '54': '258px',
+      },
+      maxWidth:{
+        'qhd': '1440px',
+      },
       gridAutoColumns: {
         'min-48': 'minmax(192px, 1fr)',
-        
+        'min-54': 'minmax(258px, 1fr)',
+      },
+      gridTemplateRows: {
+        '12': 'repeat(12, minmax(0, 1fr))',
       },
       gridTemplateColumns: {
         'fill-48': 'repeat(auto-fit, minmax(192px,1fr))',
