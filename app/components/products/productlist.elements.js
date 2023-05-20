@@ -4,7 +4,7 @@ import Slider from "rc-slider";
 import 'rc-slider/assets/index.css'
 
 async function GetProducts(){
-    let response = await fetch('https://localhost:9001/api/v1/product/3',
+    let response = await fetch('https://localhost:9001/api/v1/product/2',
                         {
                             method: "GET",
                             mode: 'cors',
@@ -29,7 +29,9 @@ export function FilterSection({...props}){
     return(
         <div className={`flex ${style}`}>
 
-            <div className="h-full top-0 w-64 p-5 pt-20 flex-shrink-0 border-r-2 max-md:absolute max-md:right-full">
+            <div className="h-full top-0 w-64 p-5 mt-20 flex-shrink-0 border-r-2 
+                max-850:absolute max-850:right-full max-850:mt-0
+                ">
                 <MajorTitleSpan text="Filters"/>
 
                 <TitleSpan text="Manufacturers"/>
@@ -59,8 +61,8 @@ export function FilterSection({...props}){
             </div>
             <div className="h-full w-full p-5 bg-cornflower_blue-900 ">
                 <SortSection/>
-                <div className="flex mb-8 space-x-3 md:space-x-0">
-                <Button className="md:hidden min-w-fit h-14" text="FILTERS" color="bg-cornflower_blue-400" icon={<FilterIcon color="white" fill="none" className="w-5 h-5 inline ml-1 relative"/>}/>
+                <div className="flex mb-8 space-x-3 850:space-x-0">
+                <Button className="850:hidden min-w-fit h-14" text="FILTERS" color="bg-cornflower_blue-400" icon={<FilterIcon color="white" fill="none" className="w-5 h-5 inline ml-1 relative"/>}/>
                 <SearchButton text="BROWSE" className={"h-14"} icon={<SearchIcon color="white" className="w-5 h-5 inline ml-1 relative"/>} color="bg-cornflower_blue-400"/>
                 </div>
 
@@ -103,19 +105,16 @@ export function Button({...props}){
 
 export function SortSection({...props}){
     return(
-        //<div className="flex max-w-full items-start space-x-10 border-b-2 border-indigo-50 border-solid">
         <div className="grid grid-rows-2 grid-flow-col gap-x-5 columns-3 border-b-2 border-indigo-50 border-solid
                         max-lg:grid-rows-2 max-lg:grid-cols-2
                         max-md:grid-rows-3 max-md:grid-cols-1
                         ">
             
-            <SortDropdown className="grid" label="Sort by"/>
+            <SortDropdown className="grid text-black-900" label="Sort by"/>
             <PriceFilter className="grid" min={0} max={2137}/>
             <TextBox className="grid max-w-fit w-full
                                 max-md:col-start-1 max-md:col-end-2
                                 " label="Search" placeHolder="Type something..."/>
-            
-            
         </div>
     )
 }
@@ -124,7 +123,7 @@ export function SortDropdown({...props}){
     return(
         <div className="h-20 sticky max-md:col-span-2">
             <label className="block mb-3" for="sort">{props.label}</label>
-            <select className="p-2 w-full h-10" id="sort" name="Sort by">
+            <select className="p-2 w-full h-10 text-black-900" id="sort" name="Sort by">
             <DropdownOption text="Price: descending"/>
             <DropdownOption text="Price: ascending"/>
             <DropdownOption text="Newest: descending"/>
@@ -207,7 +206,8 @@ export function Products({...props}){
     
     console.log(productSet)
     return(
-        <div className="bg-cornflower_blue-50 w-full h-full bg-opacity-10 p-5 max-xs:p-y max-xs:py-5">
+        <div className="w-full h-full bg-opacity-10 p-5
+                        max-850:p-0">
             <div className="grid grid-flow-row gap-5 auto-cols-min-54 grid-cols-3 
                             max-xl:grid-cols-2 
                             max-xs:grid-cols-1 
@@ -223,6 +223,31 @@ export function Products({...props}){
                 <Product productData={...productSet}/>
                 <Product productData={...productSet}/>
             </div>
+            <div className="h-16 max-w-xl ml-auto mr-auto relative mt-5
+                            flex justify-between
+                            bg-cornflower_blue-50">
+                <div className="flex">
+                    <div className="w-12 h-12 ml-1 my-auto bg-black-900"/>
+                    <div className="w-12 h-12 ml-1 my-auto bg-black-900"/>
+                </div>
+
+                <div className="flex max-xs:hidden">
+                    <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
+                    <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
+                    <input className="w-12 h-12 mx-1 my-auto text-center bg-black-900"/>
+                    <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
+                    <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
+                </div>
+                
+                <div className="flex xs:hidden ">
+                <input className="w-12 h-12 mx-1 my-auto text-center bg-black-900"/>
+                </div>
+
+                <div className="flex">
+                    <div className="w-12 h-12 mr-1 my-auto bg-black-900"/>
+                    <div className="w-12 h-12 mr-1 my-auto bg-black-900"/>
+                </div>
+            </div>
         </div>
     )
 }
@@ -232,9 +257,9 @@ export function Product({...props}){
     let product = props.productData
 
     return(
-            <div className="bg-black-900 opacity-95 min-w-54 h-80">
+            <div className="bg-black-900 opacity-95 w-full h-80">
                 <div className="w-full bg-black-900 bg-opacity-20 h-48">
-
+                    
                 </div>
                 <div className="h-28">
                     <div className="flex justify-between ">
@@ -297,4 +322,4 @@ const FilterIcon  = (props) => (
       />
     </svg>
   )
-  
+ 
