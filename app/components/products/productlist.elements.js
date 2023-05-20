@@ -223,7 +223,7 @@ export function Products({...props}){
                 <Product productData={...productSet}/>
                 <Product productData={...productSet}/>
             </div>
-            <div className="h-16 w-full mt-5
+            <div className="h-16 max-w-xl ml-auto mr-auto relative mt-5
                             flex justify-between
                             bg-cornflower_blue-50">
                 <div className="flex">
@@ -231,14 +231,18 @@ export function Products({...props}){
                     <div className="w-12 h-12 ml-1 my-auto bg-black-900"/>
                 </div>
 
-                <div className="flex">
+                <div className="flex max-xs:hidden">
                     <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
                     <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
-                    <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
+                    <input className="w-12 h-12 mx-1 my-auto text-center bg-black-900"/>
                     <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
                     <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
                 </div>
                 
+                <div className="flex xs:hidden ">
+                <input className="w-12 h-12 mx-1 my-auto text-center bg-black-900"/>
+                </div>
+
                 <div className="flex">
                     <div className="w-12 h-12 mr-1 my-auto bg-black-900"/>
                     <div className="w-12 h-12 mr-1 my-auto bg-black-900"/>
