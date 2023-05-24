@@ -4,9 +4,9 @@ import Slider from "rc-slider";
 import 'rc-slider/assets/index.css'
 
 
-async function GetProducts(pageNumber = 1 , pageSize = 12 ){
+async function GetProducts(pageNumber = 1 , pageSize = 12, orderBy = "PriceAsc" ){
 
-    let response = await fetch(`https://localhost:9001/api/v1/product?PageNumber=${pageNumber}&PageSize=${pageSize}`,
+    let response = await fetch(`https://localhost:9001/api/v1/product?PageNumber=${pageNumber}&PageSize=${pageSize}&OrderBy=${orderBy}`,
                         {
                             method: "GET",
                             mode: 'cors',
@@ -27,6 +27,11 @@ async function GetProducts(pageNumber = 1 , pageSize = 12 ){
 export function FilterSection({...props}){
 
     let style = props.className ?? 'max-w-full h-full'; 
+    const [dropdownValue, setDropdownValue] = useState("NewestDesc")
+
+    function UpdateOrderByProperty(orderBy){
+        setDropdownValue(orderBy)
+    }
 
     return(
         <div className={`flex ${style}`}>
@@ -62,7 +67,7 @@ export function FilterSection({...props}){
                 
             </div>
             <div className="h-full w-full p-5 bg-cornflower_blue-50 bg-opacity-20 ">
-                <SortSection/>
+                <SortSection dropdownValue={dropdownValue} setDropdownValue={UpdateOrderByProperty}/>
                 <div className="flex mb-8 space-x-3 850:space-x-0">
                 <Button className="850:hidden min-w-fit h-14" text="FILTERS" color="bg-cornflower_blue-400" icon={<FilterIcon color="white" fill="none" className="w-5 h-5 inline ml-1 relative"/>}/>
                 <SearchButton text="BROWSE" className={"h-14"} icon={<SearchIcon color="white" className="w-5 h-5 inline ml-1 relative"/>} color="bg-cornflower_blue-400"/>
@@ -107,14 +112,16 @@ export function Button({...props}){
 }
 
 export function SortSection({...props}){
+    const [priceRange, setPriceRange] = useState([0, 10000])
+
     return(
         <div className="grid grid-rows-2 grid-flow-col gap-x-5 columns-3 border-b-2 border-indigo-50 border-solid
                         max-lg:grid-rows-2 max-lg:grid-cols-2
                         max-md:grid-rows-3 max-md:grid-cols-1
                         ">
             
-            <SortDropdown className="grid text-black-900" label="Sort by"/>
-            <PriceFilter className="grid" min={0} max={2137}/>
+            <SortDropdown className="grid text-black-900" label="Sort by" setDropdownValue={props.setDropdownValue} dropdownValue={props.dropdownValue}/>
+            <PriceFilter priceRange={priceRange} min={0} max={10000} setPriceRange={setPriceRange} className="grid"/>
             <TextBox className="grid max-w-fit w-full
                                 max-md:col-start-1 max-md:col-end-2
                                 " label="Search" placeHolder="Type something..."/>
@@ -126,13 +133,15 @@ export function SortDropdown({...props}){
     return(
         <div className="h-20 sticky max-md:col-span-2">
             <label className="block mb-3" for="sort">{props.label}</label>
-            <select className="p-2 w-full h-10 text-black-900" id="sort" name="Sort by">
-            <DropdownOption text="Price: descending"/>
-            <DropdownOption text="Price: ascending"/>
-            <DropdownOption text="Newest: descending"/>
-            <DropdownOption text="Newest: ascending"/>
-            <DropdownOption text="Popular: descending"/>
-            <DropdownOption text="Popular: ascending"/>
+            <select className="p-2 w-full h-10 text-black-900" id="sort" name="Sort by" 
+                    value={props.dropdownValue} 
+                    onChange={(e)=>{props.setDropdownValue(e.target.value); console.log(e.target.value)}}>
+            <DropdownOption text="Price: descending" value="PriceDesc" />
+            <DropdownOption text="Price: ascending" value="PriceAsc"/>
+            <DropdownOption text="Newest: descending" value="NewestDesc"/>
+            <DropdownOption text="Newest: ascending" value="NewestAsc"/>
+            <DropdownOption text="Popular: descending" value="PopularDesc"/>
+            <DropdownOption text="Popular: ascending" value="PopularAsc"/>
             </select>
         </div>
     )
@@ -149,14 +158,14 @@ export function TextBox({...props}){
 
 export function DropdownOption({...props}){
     return(
-        <option className="font-sans">
+        <option className="font-sans" value={props.value}>
             {props.text}
         </option>
     )
 }
 
 export function PriceFilter({...props}){
-    const [priceRange, setPriceRange] = useState([props.min, props.max])
+    
     return(
         <div className="mb-2 w-full grid col-span-2">
         <div className="flex justify-between">
@@ -164,8 +173,8 @@ export function PriceFilter({...props}){
         <label className="block mb-1" for="sort">To</label>
         </div>
         <div className="flex justify-between">
-        <label className="block mb-1" for="sort">{priceRange[0]} zł</label>
-        <label className="block mb-1" for="sort">{priceRange[1]} zł</label>
+        <label className="block mb-1" for="sort">{props.priceRange[0]} zł</label>
+        <label className="block mb-1" for="sort">{props.priceRange[1]} zł</label>
         </div>
         
 
@@ -173,8 +182,8 @@ export function PriceFilter({...props}){
         <Slider className="relative w-full"
                 min = {props.min}
                 max = {props.max}
-                defaultValue = {[props.min, props.max]}
-                onChange = {(value) =>  setPriceRange(value)}
+                defaultValue = {[props.priceRange[0], props.priceRange[1]]}
+                onChange = {(value) =>  props.setPriceRange(value)}
                 step= {10}
                 count={1}
                 pushable={true}
