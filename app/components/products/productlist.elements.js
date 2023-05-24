@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import Slider from "rc-slider";
 import 'rc-slider/assets/index.css'
 
-async function GetProducts(){
-    let response = await fetch('https://localhost:9001/api/v1/product/2',
+
+async function GetProducts(pageNumber = 1 , pageSize = 12 ){
+
+    let response = await fetch(`https://localhost:9001/api/v1/product?PageNumber=${pageNumber}&PageSize=${pageSize}`,
                         {
                             method: "GET",
                             mode: 'cors',
@@ -18,7 +20,7 @@ async function GetProducts(){
 
     let body = await response.json()          
 
-    //console.log(body.data)
+    console.log(body.data)
     return await body
 }
 
@@ -59,7 +61,7 @@ export function FilterSection({...props}){
                 <Button text="Apply" color="bg-cornflower_blue-400"/>
                 
             </div>
-            <div className="h-full w-full p-5 bg-cornflower_blue-900 ">
+            <div className="h-full w-full p-5 bg-cornflower_blue-50 bg-opacity-20 ">
                 <SortSection/>
                 <div className="flex mb-8 space-x-3 850:space-x-0">
                 <Button className="850:hidden min-w-fit h-14" text="FILTERS" color="bg-cornflower_blue-400" icon={<FilterIcon color="white" fill="none" className="w-5 h-5 inline ml-1 relative"/>}/>
@@ -96,6 +98,7 @@ export function ListMember({...props}){
 export function Button({...props}){
     return(
         <button className={`h-10 block my-auto p-1 px-3 bg-opacity-80 rounded-md mt-8 ${props.color} ${props.className} hover:transition-all hover:bg-opacity-100
+                            active:opacity-80
                             max-md:w-1/5 
                             `}> 
             {props.text}{props.icon}
@@ -184,6 +187,7 @@ export function PriceFilter({...props}){
 export function SearchButton({...props}){
     return(
         <button className={`w-full text-lg h-14 col-span-2 bg-opacity-80 rounded-md mt-8 ${props.color} hover:transition-all hover:bg-opacity-100
+                            active:opacity-80
                             max-md:w-4/5
                             `}>
             {props.text}{props.icon}
@@ -212,20 +216,13 @@ export function Products({...props}){
                             max-xl:grid-cols-2 
                             max-xs:grid-cols-1 
                             ">
-                <Product productData={...productSet}/>
-                <Product productData={...productSet}/>
-                <Product productData={...productSet}/>
-                <Product productData={...productSet}/>
-                <Product productData={...productSet}/>
-                <Product productData={...productSet}/>
-                <Product productData={...productSet}/>
-                <Product productData={...productSet}/>
-                <Product productData={...productSet}/>
-                <Product productData={...productSet}/>
+                
+                {productSet.map((product) => <Product productData={...product}/> )}
             </div>
+
             <div className="h-16 max-w-xl ml-auto mr-auto relative mt-5
                             flex justify-between
-                            bg-cornflower_blue-50">
+                            bg-cornflower_blue-50 bg-opacity-10">
                 <div className="flex">
                     <div className="w-12 h-12 ml-1 my-auto bg-black-900"/>
                     <div className="w-12 h-12 ml-1 my-auto bg-black-900"/>
@@ -234,13 +231,16 @@ export function Products({...props}){
                 <div className="flex max-xs:hidden">
                     <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
                     <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
-                    <input className="w-12 h-12 mx-1 my-auto text-center bg-black-900"/>
+                    {
+                    //on update call api with new page number, if doesn't exist call last page - a change in the api might be necessary
+                    }
+                    <input placeholder={`${productSet.currentPage ?? "1"}`} className="w-12 h-12 mx-1 my-auto text-center bg-black-900"/>
                     <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
                     <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
                 </div>
                 
                 <div className="flex xs:hidden ">
-                <input className="w-12 h-12 mx-1 my-auto text-center bg-black-900"/>
+                <input placeholder={`${productSet.currentPage ?? "1"}`} className="w-12 h-12 mx-1 my-auto text-center bg-black-900"/>
                 </div>
 
                 <div className="flex">
@@ -255,11 +255,14 @@ export function Products({...props}){
 export function Product({...props}){
 
     let product = props.productData
-
+    //review function to be added
+    //favorite button to be added in the top right corner of the product photo
     return(
             <div className="bg-black-900 opacity-95 w-full h-80">
                 <div className="w-full bg-black-900 bg-opacity-20 h-48">
-                    
+                    <img src="https://media.istockphoto.com/id/936307606/vector/red-sliced-onion-watercolor-hand-drawn-illustration-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=q1au5WBcEZKQD15ji-E_6pEKDIwcxX5nXBU54yi5cyc="
+                         className="w-full h-48 object-cover sticky"
+                    />
                 </div>
                 <div className="h-28">
                     <div className="flex justify-between ">
@@ -267,7 +270,7 @@ export function Product({...props}){
                     <div className="p-2">* * * * * </div>
                     </div>
                     
-                    <div className="w-full h-6 bg-opacity-95 bg-black-900  p-2 pt-0 pb-1 text-sm">{product.description}</div>
+                    <div className="w-full h-6 bg-opacity-95 bg-black-900  p-2 pt-0 pb-1 text-sm">{product.manufacturer.name}</div>
                     <div className="w-full h-12 p-2 pb-0 flex justify-between">
                         <div className="text-2xl max-lg:text-xl mb-auto mt-auto">{product.price ?? 0}.00 zł</div>
                         <Button className='w-28 max-md:w-28 max-md:text-sm mb-auto mt-auto relative' text="Add to cart" color="bg-cornflower_blue-400"/>
