@@ -4,7 +4,7 @@ import Slider from "rc-slider";
 import 'rc-slider/assets/index.css'
 
 
-async function GetProducts(pageNumber = 1 , pageSize = 12, orderBy = "PriceAsc" ){
+async function GetProducts(pageNumber = 1 , pageSize = 3, orderBy = "PriceAsc" ){
 
     let response = await fetch(`https://localhost:9001/api/v1/product?PageNumber=${pageNumber}&PageSize=${pageSize}&OrderBy=${orderBy}`,
                         {
@@ -28,6 +28,18 @@ export function FilterSection({...props}){
 
     let style = props.className ?? 'max-w-full h-full'; 
     const [dropdownValue, setDropdownValue] = useState("NewestDesc")
+
+    const [productSet, setProductSet] = useState([])
+
+    const [currentPage, setCurrentPage] = useState(1)
+
+    function UpdateProductSet(set){
+        setProductSet(set)
+    }
+
+    function ChangePage(page){
+        setCurrentPage(page)
+    }
 
     function UpdateOrderByProperty(orderBy){
         setDropdownValue(orderBy)
@@ -73,7 +85,7 @@ export function FilterSection({...props}){
                 <SearchButton text="BROWSE" className={"h-14"} icon={<SearchIcon color="white" className="w-5 h-5 inline ml-1 relative"/>} color="bg-cornflower_blue-400"/>
                 </div>
 
-                <Products/>
+                <Products setProductSet={UpdateProductSet} productSet={...productSet} currentPage={currentPage} setCurrentPage={ChangePage} orderBy={dropdownValue}/>
             </div>
         </div>
     )
@@ -138,7 +150,7 @@ export function SortDropdown({...props}){
                     onChange={(e)=>{props.setDropdownValue(e.target.value); console.log(e.target.value)}}>
             <DropdownOption text="Price: descending" value="PriceDesc" />
             <DropdownOption text="Price: ascending" value="PriceAsc"/>
-            <DropdownOption text="Newest: descending" value="NewestDesc"/>
+            <DropdownOption text="Newest: descending" value="DateDesc"/>
             <DropdownOption text="Newest: ascending" value="NewestAsc"/>
             <DropdownOption text="Popular: descending" value="PopularDesc"/>
             <DropdownOption text="Popular: ascending" value="PopularAsc"/>
@@ -205,19 +217,22 @@ export function SearchButton({...props}){
 }
 
 export function Products({...props}){
-    const [productSet, setProductSet] = useState([])
     
+    //pageNumber = 1 , pageSize = 12, orderBy = "PriceAsc"
     useEffect(() => {
         let mounted = true
-        GetProducts().then(product => {
+        
+        GetProducts(props.currentPage, 3, props.orderBy).then(product => {
             if(mounted){
-                setProductSet(product.data)
+                console.log(props)
+                let newData = [...product.data]
+                console.log(newData)
+                props.setProductSet(newData)
             }
         })
         return () => mounted = false;
-    }, [])
+    }, [props.orderBy, props.currentPage])
     
-    console.log(productSet)
     return(
         <div className="w-full h-full bg-opacity-10 p-5
                         max-850:p-0">
@@ -226,7 +241,7 @@ export function Products({...props}){
                             max-xs:grid-cols-1 
                             ">
                 
-                {productSet.map((product) => <Product productData={...product}/> )}
+                {props.productSet.map((product) => <Product productData={...product} key={product.id} orderBy={props.orderBy}/> )}
             </div>
 
             <div className="h-16 max-w-xl ml-auto mr-auto relative mt-5
@@ -234,7 +249,7 @@ export function Products({...props}){
                             bg-cornflower_blue-50 bg-opacity-10">
                 <div className="flex">
                     <div className="w-12 h-12 ml-1 my-auto bg-black-900"/>
-                    <div className="w-12 h-12 ml-1 my-auto bg-black-900"/>
+                    <div className="w-12 h-12 ml-1 my-auto bg-black-900 cursor-pointer" onClick={() => props.setCurrentPage(props.currentPage -1)}/>
                 </div>
 
                 <div className="flex max-xs:hidden">
@@ -243,17 +258,25 @@ export function Products({...props}){
                     {
                     //on update call api with new page number, if doesn't exist call last page - a change in the api might be necessary
                     }
-                    <input placeholder={`${productSet.currentPage ?? "1"}`} className="w-12 h-12 mx-1 my-auto text-center bg-black-900"/>
+                    <input defaultValue={1}
+                            className="w-12 h-12 mx-1 my-auto text-center bg-black-900"
+                            value={props.currentPage} 
+                            onChange={(e)=>{props.setCurrentPage(e.target.value); console.log(e.target.value)}}
+                            />
                     <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
                     <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
                 </div>
                 
                 <div className="flex xs:hidden ">
-                <input placeholder={`${productSet.currentPage ?? "1"}`} className="w-12 h-12 mx-1 my-auto text-center bg-black-900"/>
+                <input defaultValue={1}
+                            className="w-12 h-12 mx-1 my-auto text-center bg-black-900"
+                            value={props.currentPage} 
+                            onChange={(e)=>{props.setCurrentPage(e.target.value); console.log(e.target.value)}}
+                            />
                 </div>
 
                 <div className="flex">
-                    <div className="w-12 h-12 mr-1 my-auto bg-black-900"/>
+                    <div className="w-12 h-12 mr-1 my-auto bg-black-900 cursor-pointer" onClick={() => props.setCurrentPage(props.currentPage +1)}/>
                     <div className="w-12 h-12 mr-1 my-auto bg-black-900"/>
                 </div>
             </div>
