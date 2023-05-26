@@ -33,12 +33,23 @@ export function FilterSection({...props}){
 
     const [currentPage, setCurrentPage] = useState(1)
 
+    const [maxPage, setMaxPage] = useState(1);
+
     function UpdateProductSet(set){
         setProductSet(set)
     }
 
+    function UpdateMaxPage(page){
+        setMaxPage(page)
+    }
+
     function ChangePage(page){
-        setCurrentPage(page)
+        let newVal = page > maxPage ? maxPage : page;
+        newVal = newVal <= 0 ? 1 : newVal;
+
+        console.log(`update old: ${maxPage} new: ${page}`)
+
+        setCurrentPage(newVal)
     }
 
     function UpdateOrderByProperty(orderBy){
@@ -85,7 +96,7 @@ export function FilterSection({...props}){
                 <SearchButton text="BROWSE" className={"h-14"} icon={<SearchIcon color="white" className="w-5 h-5 inline ml-1 relative"/>} color="bg-cornflower_blue-400"/>
                 </div>
 
-                <Products setProductSet={UpdateProductSet} productSet={...productSet} currentPage={currentPage} setCurrentPage={ChangePage} orderBy={dropdownValue}/>
+                <Products setProductSet={UpdateProductSet} productSet={...productSet} currentPage={currentPage} setMaxPage={UpdateMaxPage} setCurrentPage={ChangePage} orderBy={dropdownValue}/>
             </div>
         </div>
     )
@@ -176,6 +187,7 @@ export function DropdownOption({...props}){
     )
 }
 
+
 export function PriceFilter({...props}){
     
     return(
@@ -194,7 +206,7 @@ export function PriceFilter({...props}){
         <Slider className="relative w-full"
                 min = {props.min}
                 max = {props.max}
-                defaultValue = {[props.priceRange[0], props.priceRange[1]]}
+                value = {[props.priceRange[0], props.priceRange[1]]}
                 onChange = {(value) =>  props.setPriceRange(value)}
                 step= {10}
                 count={1}
@@ -224,9 +236,9 @@ export function Products({...props}){
         
         GetProducts(props.currentPage, 3, props.orderBy).then(product => {
             if(mounted){
-                console.log(props)
                 let newData = [...product.data]
                 console.log(newData)
+                props.setMaxPage(product.lastPage)
                 props.setProductSet(newData)
             }
         })
