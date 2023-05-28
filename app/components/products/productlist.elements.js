@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import Slider from "rc-slider";
 import 'rc-slider/assets/index.css'
+import Spinner from "../ui components/spinner";
+import { ArrowRightIcon, ArrowLeftIcon, ArrowDoubleLeftIcon, ArrowDoubleRightIcon } from "../icons";
 
 
 async function GetProducts(pageNumber = 1 , pageSize = 3, orderBy = "PriceAsc" ){
@@ -13,14 +15,12 @@ async function GetProducts(pageNumber = 1 , pageSize = 3, orderBy = "PriceAsc" )
                             headers:{
                                 'Sec-Fetch-Site': 'cross-site',
                                 'Access-Control-Allow-Origin': 'http://localhost:9001/',
-                                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT',
+                                'Access-Control-Allow-Methods': 'GET, OPTIONS',
                             },
                         }
     )
 
     let body = await response.json()          
-
-    console.log(body.data)
     return await body
 }
 
@@ -43,17 +43,15 @@ export function FilterSection({...props}){
         setMaxPage(page)
     }
 
-    function ChangePage(page){
-        let newVal = page > maxPage ? maxPage : page;
-        newVal = newVal <= 0 ? 1 : newVal;
-
-        console.log(`update old: ${maxPage} new: ${page}`)
-
-        setCurrentPage(newVal)
-    }
-
     function UpdateOrderByProperty(orderBy){
         setDropdownValue(orderBy)
+    }
+
+    function ChangePage(page){
+        let validated = page > maxPage ? maxPage : page;
+        validated = validated <= 0 ? 1 : validated;
+
+        setCurrentPage(validated)
     }
 
     return(
@@ -96,7 +94,7 @@ export function FilterSection({...props}){
                 <SearchButton text="BROWSE" className={"h-14"} icon={<SearchIcon color="white" className="w-5 h-5 inline ml-1 relative"/>} color="bg-cornflower_blue-400"/>
                 </div>
 
-                <Products setProductSet={UpdateProductSet} productSet={...productSet} currentPage={currentPage} setMaxPage={UpdateMaxPage} setCurrentPage={ChangePage} orderBy={dropdownValue}/>
+                <Products setProductSet={UpdateProductSet} productSet={...productSet} currentPage={currentPage} setMaxPage={UpdateMaxPage} setCurrentPage={ChangePage} maxPage={maxPage} orderBy={dropdownValue}/>
             </div>
         </div>
     )
@@ -158,11 +156,11 @@ export function SortDropdown({...props}){
             <label className="block mb-3" for="sort">{props.label}</label>
             <select className="p-2 w-full h-10 text-black-900" id="sort" name="Sort by" 
                     value={props.dropdownValue} 
-                    onChange={(e)=>{props.setDropdownValue(e.target.value); console.log(e.target.value)}}>
+                    onChange={(e)=>{props.setDropdownValue(e.target.value)}}>
+            <DropdownOption text="Date: from newest" value="DateDesc"/>
+            <DropdownOption text="Date: from oldest" value="DateAsc"/>
             <DropdownOption text="Price: descending" value="PriceDesc" />
             <DropdownOption text="Price: ascending" value="PriceAsc"/>
-            <DropdownOption text="Newest: descending" value="DateDesc"/>
-            <DropdownOption text="Newest: ascending" value="NewestAsc"/>
             <DropdownOption text="Popular: descending" value="PopularDesc"/>
             <DropdownOption text="Popular: ascending" value="PopularAsc"/>
             </select>
@@ -230,18 +228,20 @@ export function SearchButton({...props}){
 
 export function Products({...props}){
     
+    const [isLoading, setIsLoading] = useState(true)
+
     //pageNumber = 1 , pageSize = 12, orderBy = "PriceAsc"
     useEffect(() => {
+        setIsLoading(true)
         let mounted = true
-        
+
         GetProducts(props.currentPage, 3, props.orderBy).then(product => {
             if(mounted){
                 let newData = [...product.data]
-                console.log(newData)
                 props.setMaxPage(product.lastPage)
                 props.setProductSet(newData)
             }
-        })
+        }).then(setIsLoading(false));
         return () => mounted = false;
     }, [props.orderBy, props.currentPage])
     
@@ -253,44 +253,36 @@ export function Products({...props}){
                             max-xs:grid-cols-1 
                             ">
                 
-                {props.productSet.map((product) => <Product productData={...product} key={product.id} orderBy={props.orderBy}/> )}
+                {!isLoading && props.productSet.map((product) => <Product productData={...product} key={product.id} orderBy={props.orderBy}/> )}
+                
             </div>
+
+            {isLoading && <div className="m-auto w-fit p-10"> <Spinner className="mx-auto relative w-full"/> </div>}
 
             <div className="h-16 max-w-xl ml-auto mr-auto relative mt-5
                             flex justify-between
                             bg-cornflower_blue-50 bg-opacity-10">
-                <div className="flex">
-                    <div className="w-12 h-12 ml-1 my-auto bg-black-900"/>
-                    <div className="w-12 h-12 ml-1 my-auto bg-black-900 cursor-pointer" onClick={() => props.setCurrentPage(props.currentPage -1)}/>
-                </div>
 
-                <div className="flex max-xs:hidden">
-                    <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
-                    <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
-                    {
-                    //on update call api with new page number, if doesn't exist call last page - a change in the api might be necessary
-                    }
+                <div className="flex m-auto">
+                <div className="w-12 h-12 ml-1 my-auto bg-black-900">
+                        <ArrowDoubleLeftIcon className="w-12 h-12 p-2 active:opacity-70 active:scale-90 transition-all" onClick={() => props.setCurrentPage(1)}/>
+                    </div>
+                    <div className="w-12 h-12 ml-1 my-auto bg-black-900 cursor-pointer" onClick={() => props.setCurrentPage(props.currentPage -1)}>
+                        <ArrowLeftIcon className="w-10 h-12 p-2 active:opacity-70 m-auto mt-auto mb-auto active:scale-90 transition-all"/>
+                    </div>
                     <input defaultValue={1}
                             className="w-12 h-12 mx-1 my-auto text-center bg-black-900"
                             value={props.currentPage} 
-                            onChange={(e)=>{props.setCurrentPage(e.target.value); console.log(e.target.value)}}
+                            onChange={(e)=>{props.setCurrentPage(e.target.value)}}
                             />
-                    <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
-                    <div className="w-12 h-12 mx-1 my-auto bg-black-900"/>
+                    <div className="w-12 h-12 mr-1 my-auto bg-black-900 cursor-pointer " onClick={() => props.setCurrentPage(props.currentPage +1)}>
+                        <ArrowRightIcon className="w-10 h-12 m-auto p-2 active:opacity-70 active:scale-90 transition-al"/>
+                    </div>
+                    <div className="w-12 h-12 mr-1 my-auto bg-black-900">
+                        <ArrowDoubleRightIcon className="w-12 h-12 p-2 active:opacity-70 active:scale-90 transition-all" onClick={() => props.setCurrentPage(props.maxPage)}/>
+                    </div>
                 </div>
                 
-                <div className="flex xs:hidden ">
-                <input defaultValue={1}
-                            className="w-12 h-12 mx-1 my-auto text-center bg-black-900"
-                            value={props.currentPage} 
-                            onChange={(e)=>{props.setCurrentPage(e.target.value); console.log(e.target.value)}}
-                            />
-                </div>
-
-                <div className="flex">
-                    <div className="w-12 h-12 mr-1 my-auto bg-black-900 cursor-pointer" onClick={() => props.setCurrentPage(props.currentPage +1)}/>
-                    <div className="w-12 h-12 mr-1 my-auto bg-black-900"/>
-                </div>
             </div>
         </div>
     )
