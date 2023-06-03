@@ -7,7 +7,7 @@ import { HamburgerIcon } from "../icons";
 export default function NavBar(){
     return(
         <nav className="sticky top-0 z-50 h-14 max-w-qhd m-auto bg-black-900">
-            <div className="px-6 h-14 flex justify-between font-mono text-2xl font-semibold">
+            <div className="px-6 h-14 flex justify-between font-mono text-2xl flex-column font-semibold relative">
                 <div className="flex">
                     <SvgComponent className="h-9 my-auto w-8"/>
                     <Link className="mt-3 ml-1 text-3xl hover:transition-all hover:text-turquoise-50" href={'/'}>HardwareOnion</Link>
@@ -15,7 +15,7 @@ export default function NavBar(){
                 <div className="h-10 my-auto font-normal max-md:hidden">
                     <Button label="Products"/>
                     <Button label="Deals"/>
-                    <ButtonMain url="/xd" label="Cart"/>
+                    <ButtonMain url="/" label="Cart"/>
                 </div>
                 <div className="h-10 w-10 md:hidden">
                     <HamburgerIcon className="w-14 h-14 mb-auto mt-auto" />

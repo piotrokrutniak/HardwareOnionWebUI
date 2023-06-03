@@ -1,20 +1,24 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import Slider from "rc-slider";
 import 'rc-slider/assets/index.css'
+import Button from "../ui components/button";
 import Spinner from "../ui components/spinner";
 import { ArrowRightIcon, ArrowLeftIcon, ArrowDoubleLeftIcon, ArrowDoubleRightIcon } from "../icons";
+import { GetApiEndpoint, GetBaseUrl } from "@/app.config";
 
 
 async function GetProducts(pageNumber = 1 , pageSize = 3, orderBy = "PriceAsc" ){
-
-    let response = await fetch(`https://localhost:9001/api/v1/product?PageNumber=${pageNumber}&PageSize=${pageSize}&OrderBy=${orderBy}`,
+    const apiEndpoint = GetApiEndpoint()
+    console.log(apiEndpoint)
+    let response = await fetch(`${apiEndpoint}api/v1/product?PageNumber=${pageNumber}&PageSize=${pageSize}&OrderBy=${orderBy}`,
                         {
                             method: "GET",
                             mode: 'cors',
                             headers:{
                                 'Sec-Fetch-Site': 'cross-site',
-                                'Access-Control-Allow-Origin': 'http://localhost:9001/',
+                                'Access-Control-Allow-Origin': apiEndpoint,
                                 'Access-Control-Allow-Methods': 'GET, OPTIONS',
                             },
                         }
@@ -90,7 +94,7 @@ export function FilterSection({...props}){
             <div className="h-full w-full p-5 bg-cornflower_blue-50 bg-opacity-20 ">
                 <SortSection dropdownValue={dropdownValue} setDropdownValue={UpdateOrderByProperty}/>
                 <div className="flex mb-8 space-x-3 850:space-x-0">
-                <Button className="850:hidden min-w-fit h-14" text="FILTERS" color="bg-cornflower_blue-400" icon={<FilterIcon color="white" fill="none" className="w-5 h-5 inline ml-1 relative"/>}/>
+                <Button className="850:hidden min-w-fit h-14 max-md:w-1/5 text-lg mt-8" text="FILTERS" color="bg-cornflower_blue-400" icon={<FilterIcon color="white" fill="none" className="w-5 h-5 inline ml-1 relative"/>}/>
                 <SearchButton text="BROWSE" className={"h-14"} icon={<SearchIcon color="white" className="w-5 h-5 inline ml-1 relative"/>} color="bg-cornflower_blue-400"/>
                 </div>
 
@@ -121,17 +125,6 @@ export function ListMember({...props}){
     )
 }
 
-export function Button({...props}){
-    return(
-        <button className={`h-10 block my-auto p-1 px-3 bg-opacity-80 rounded-md mt-8 ${props.color} ${props.className} hover:transition-all hover:bg-opacity-100
-                            active:opacity-80
-                            max-md:w-1/5 
-                            `}> 
-            {props.text}{props.icon}
-        </button>
-    )
-}
-
 export function SortSection({...props}){
     const [priceRange, setPriceRange] = useState([0, 10000])
 
@@ -153,7 +146,7 @@ export function SortSection({...props}){
 export function SortDropdown({...props}){
     return(
         <div className="h-20 sticky max-md:col-span-2">
-            <label className="block mb-3" for="sort">{props.label}</label>
+            <label className="block mb-3" htmlFor="sort">{props.label}</label>
             <select className="p-2 w-full h-10 text-black-900" id="sort" name="Sort by" 
                     value={props.dropdownValue} 
                     onChange={(e)=>{props.setDropdownValue(e.target.value)}}>
@@ -171,7 +164,7 @@ export function SortDropdown({...props}){
 export function TextBox({...props}){
     return(
         <div className="w-full max-md:col-span-2 max-w-full h-20">
-        <label className="block mb-3 " for="sort">{props.label}</label>
+        <label className="block mb-3 " htmlFor="sort">{props.label}</label>
         <input className="p-2 h-10 w-full" type="text" placeholder={props.placeHolder}/>
         </div>
     )
@@ -191,12 +184,12 @@ export function PriceFilter({...props}){
     return(
         <div className="mb-2 w-full grid col-span-2">
         <div className="flex justify-between">
-        <label className="block mb-1" for="sort">From</label>
-        <label className="block mb-1" for="sort">To</label>
+        <label className="block mb-1" htmlFor="sort">From</label>
+        <label className="block mb-1" htmlFor="sort">To</label>
         </div>
         <div className="flex justify-between">
-        <label className="block mb-1" for="sort">{props.priceRange[0]} zł</label>
-        <label className="block mb-1" for="sort">{props.priceRange[1]} zł</label>
+        <label className="block mb-1" htmlFor="sort">{props.priceRange[0]} zł</label>
+        <label className="block mb-1" htmlFor="sort">{props.priceRange[1]} zł</label>
         </div>
         
 
@@ -230,6 +223,8 @@ export function Products({...props}){
     
     const [isLoading, setIsLoading] = useState(true)
 
+    const baseUrl = GetBaseUrl()
+
     //pageNumber = 1 , pageSize = 12, orderBy = "PriceAsc"
     useEffect(() => {
         setIsLoading(true)
@@ -253,7 +248,7 @@ export function Products({...props}){
                             max-xs:grid-cols-1 
                             ">
                 
-                {!isLoading && props.productSet.map((product) => <Product productData={...product} key={product.id} orderBy={props.orderBy}/> )}
+                {!isLoading && props.productSet.map((product) => <Product productData={...product} key={product.id} baseUrl={baseUrl} orderBy={props.orderBy}/> )}
                 
             </div>
 
@@ -270,7 +265,7 @@ export function Products({...props}){
                     <div className="w-12 h-12 ml-1 my-auto bg-black-900 cursor-pointer" onClick={() => props.setCurrentPage(props.currentPage -1)}>
                         <ArrowLeftIcon className="w-10 h-12 p-2 active:opacity-70 m-auto mt-auto mb-auto active:scale-90 transition-all"/>
                     </div>
-                    <input defaultValue={1}
+                    <input
                             className="w-12 h-12 mx-1 my-auto text-center bg-black-900"
                             value={props.currentPage} 
                             onChange={(e)=>{props.setCurrentPage(e.target.value)}}
@@ -295,11 +290,13 @@ export function Product({...props}){
     //favorite button to be added in the top right corner of the product photo
     return(
             <div className="bg-black-900 opacity-95 w-full h-80">
+                <Link href={`${props.baseUrl}products/${product.id}`}>
                 <div className="w-full bg-black-900 bg-opacity-20 h-48">
                     <img src="https://media.istockphoto.com/id/936307606/vector/red-sliced-onion-watercolor-hand-drawn-illustration-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=q1au5WBcEZKQD15ji-E_6pEKDIwcxX5nXBU54yi5cyc="
                          className="w-full h-48 object-cover sticky"
                     />
                 </div>
+                </Link>
                 <div className="h-28">
                     <div className="flex justify-between ">
                     <div className="h-8 p-2">{product.name}</div>
