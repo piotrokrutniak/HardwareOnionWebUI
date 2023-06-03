@@ -23,7 +23,7 @@ export default function ProductPage({...props}){
 
     return productData ? (
         
-         <ProductInfoSection isLoading={isLoading} productData={productData}/>
+         <ProductInfoSection isLoading={isLoading} productData={productData} id={props.userId}/>
         
     ) : <div>Loading</div>
     }

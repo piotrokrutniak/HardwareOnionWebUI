@@ -1,16 +1,10 @@
+import GetProductDetails from "@/app/(api methods)/GetProductDetails"
+import { useEffect } from "react/cjs/react.development"
+import { useState } from "react/cjs/react.development"
 import { ShoppingCartSVG } from "../icons"
 import Button from "../ui components/button"
 
 //discount to be added
-
-/*
-            <section id="title-section">
-                <div className="text-4xl bg-black-900">{props.productData.name}</div>
-                <div className="text-2xl bg-black-900">{props.productData.manufacturer ? props.productData.manufacturer.name : ""}</div>
-                
-            </section>
-*/
-
 
 export function ProductInfoSection({...props}){
 
@@ -40,13 +34,10 @@ export function ProductInfoSection({...props}){
                             <div className="text-xl relative h-8 text-turquoise-50"> Tomorrow </div>
                         </div>
                     </div>
-                    <div className="bg-white-900/10 w-full max-h-full h-72 p-3 text-md grid grid-cols-2 max-sm:grid-cols-1 gap-2 max-sm:overflow-y-scroll">
+                    <div className="bg-white-900/10 w-full max-h-full h-72 p-3 text-md grid grid-cols-2 max-sm:grid-cols-1 gap-2 overflow-y-auto">
 
                         {/* Map these with a limit */}
-                        <div>
-                            <div className="w-full bg-gradient-to-r from-black-900 to-transparent text-white-900 p-1"> Description </div>
-                            <div className="w-full text-white-900 p-1"> lor </div>
-                        </div>
+                        <ProductDetails id={props.id}/>
                         <div>
                             <div className="w-full bg-gradient-to-r from-black-900 to-transparent text-white-900 p-1"> Memory Type </div>
                             <div className="w-full text-white-900 p-1"> GDDR5 </div>
@@ -63,6 +54,7 @@ export function ProductInfoSection({...props}){
                             <div className="w-full bg-gradient-to-r from-black-900 to-black-900/5 text-white-900 p-1"> Memory Size </div>
                             <div className="w-full text-white-900 p-1"> 8GB </div>
                         </div>
+                        
                         
 
                     </div>
@@ -91,6 +83,47 @@ export function ProductInfoSection({...props}){
             </section>
 
 
+        </div>
+    )
+}
+
+function ProductDetails({...props}){
+
+    const [isLoading, setIsLoading] = useState(true)
+    const [productData, setProductData] = useState([])
+
+    useEffect(() => {
+        setIsLoading(true)
+        let mounted = true
+        
+        GetProductDetails(props.id).then(p => {
+            if(mounted){
+                setProductData(p.data)
+            }
+        }).then(setIsLoading(false)).then(console.log(productData));
+        return () => mounted = false;
+    }, [])
+
+
+
+    
+    return !isLoading ? (
+        <>
+        {console.log(productData)} {productData.map((p) => (<Detail detailData={p}/>))}
+        </>
+    ) : <div>Loading...</div>
+}
+
+function Detail({...props}){
+    const data = props.detailData
+    console.log(data)
+
+    return(
+        <div className={`${data.detailType.name == "Description" ? "col-span-2 max-sm:col-span-1" : ""}`}>
+            <div className="w-full bg-gradient-to-r from-black-900 to-transparent text-white-900 p-1"> {data.detailType.name} </div>
+            <div className="w-full text-white-900 p-1"> 
+                {data.description}
+            </div>
         </div>
     )
 }

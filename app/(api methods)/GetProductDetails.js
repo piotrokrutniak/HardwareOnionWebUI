@@ -2,7 +2,7 @@ import { GetApiEndpoint } from '@/app.config';
 
 export default async function GetProductDetails(id){
     const apiEndpoint = GetApiEndpoint()
-    let response = await fetch(`${apiEndpoint}api/v1/productdetail/${id}`,
+    let response = await fetch(`${apiEndpoint}api/v1/ProductDetail/ByProductId?ProductId=${id}`,
                         {
                             method: "GET",
                             mode: 'cors',
