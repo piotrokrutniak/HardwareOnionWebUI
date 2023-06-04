@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import onion from "../../media/logo/onion.svg"
-import { Button, ButtonMain, SvgComponent } from "./navbar.elements";
+import { Button, ButtonMain, SvgComponent, UserShortcut } from "./navbar.elements";
 import { HamburgerIcon } from "../icons";
 
 export default function NavBar(){
@@ -12,10 +12,11 @@ export default function NavBar(){
                     <SvgComponent className="h-9 my-auto w-8"/>
                     <Link className="mt-3 ml-1 text-3xl hover:transition-all hover:text-turquoise-50" href={'/'}>HardwareOnion</Link>
                 </div>
-                <div className="h-10 my-auto font-normal max-md:hidden">
+                <div className="h-10 my-auto font-normal max-md:hidden flex">
                     <Button label="Products"/>
                     <Button label="Deals"/>
                     <ButtonMain url="/" label="Cart"/>
+                    <UserShortcut className="w-14 h-14"/>
                 </div>
                 <div className="h-10 w-10 md:hidden">
                     <HamburgerIcon className="w-14 h-14 mb-auto mt-auto" />

@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { UserIcon } from "../icons"
 
 export function Button({...props}){
     return(
@@ -17,6 +18,13 @@ export function ButtonMain({...props}){
     )
 }
 
+export function UserShortcut({...props}){
+    return(
+        <div className="flex ml-4 hover:cursor-pointer">
+            <UserIcon className="h-10 w-10 inline border-4 rounded-full border-white-900 "/>
+        </div>   
+    )
+}
 
 export function SvgComponent({...props})
 {
