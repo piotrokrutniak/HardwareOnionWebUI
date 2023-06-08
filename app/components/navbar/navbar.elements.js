@@ -3,16 +3,21 @@ import { UserIcon } from "../icons"
 
 export function Button({...props}){
     return(
-        <button className="h-10 my-auto ml-5 p-1 px-2 hover:transition-all hover:text-turquoise-50"> {props.label} </button>
+        <button className="h-10 my-auto ml-5 p-1 px-2 hover:transition-all hover:text-turquoise-50 active:opacity-80"> 
+            {props.label} 
+        </button>
     )
 }
 
 export function ButtonMain({...props}){
     return(
         <Link href={props.url}>
-        <button className="h-10 my-auto ml-5 p-1 px-3 bg-rose-600 bg-turquoise-50 bg-opacity-80 hover:transition-all rounded-md  hover:bg-turquoise-50 hover:bg-opacity-90 " > 
-            Cart 
-            <ShoppingCartSVG className="w-8 h-8 inline ml-2"/> 
+        <button className="h-10 my-auto ml-5 p-1 px-3 bg-rose-600 bg-turquoise-50 bg-opacity-80 rounded-md 
+                           hover:transition-all hover:bg-turquoise-50 hover:bg-opacity-90 
+                           active:opacity-80
+                           " > 
+            {props.label ?? ""} 
+            <ShoppingCartSVG className="w-8 h-8 inline"/> 
         </button>
         </Link>
     )
@@ -20,10 +25,70 @@ export function ButtonMain({...props}){
 
 export function UserShortcut({...props}){
     return(
-        <div className="flex ml-4 hover:cursor-pointer">
-            <UserIcon className="h-10 w-10 inline border-4 rounded-full border-white-900 "/>
+        <div className={`${props.className} flex hover:cursor-pointer`} onClick={props.onClick}>
+            <UserIcon className={`${props.width ?? "w-10"} ${props.height ?? "h-10"} inline border-4 rounded-full border-white-900 `}/>
         </div>   
     )
+}
+
+export function UserPanel({...props}){
+
+    return props.visible ? (
+        <div className="bg-black-900 w-80 inline-block absolute top-16 right-2 text-lg border-4 border-white-900/25 rounded-xl max-md:hidden">
+                        
+                        <div className="flex bg-white-900/10 w-full justify-between p-7 rounded-xl border-black-900">
+                            <UserShortcut width="w-8" height="h-8"/>
+                            <div>
+                                {props.userEmail ?? "Guest"}
+                            </div>
+                        </div>
+                        <div className="p-7">
+                            <Link href={"login"}>
+                            <div className="bg-black-900 rounded-md p-2 border-2  mb-4 opacity-90 transition-all
+                                            hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                            active:opacity-80
+                                            " onClick={props.onClick}>
+                                Sign In
+                            </div>
+                            </Link>
+                            <Link href={"register"}>
+                            <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all 
+                                            hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                            active:opacity-80
+                                            " onClick={props.onClick}>
+                                Sign Up
+                            </div>
+                            </Link>
+                        </div>
+                    </div>
+    ) : <></>
+}
+
+export function MobilePanel({...props}){
+    return props.visible ? (
+        <div className="w-full h-screen max-h-screen overflow-hidden bg-black-900 absolute flex flex-col md:hidden">
+        <div className="flex flex-col relative p-10 text-3xl gap-7">
+        <Link href={"login"}>
+                            <div className="bg-black-900 rounded-md p-4 border-2  mb-4 opacity-90 transition-all
+                                            hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                            active:opacity-80
+                                            " onClick={props.onClick}>
+                                Sign In
+                            </div>
+        </Link>
+
+        <Link href={"register"}>
+                            <div className="bg-black-900 rounded-md p-4 border-2 opacity-90 transition-all 
+                                            hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                            active:opacity-80
+                                            " onClick={props.onClick}>
+                                Sign Up
+                            </div>
+        </Link>
+        <Button/>
+        </div>
+        </div>
+    ) : <></>
 }
 
 export function SvgComponent({...props})
