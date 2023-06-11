@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { UserIcon } from "../icons"
+import { useEffect, useRef } from "react"
 
 export function Button({...props}){
     return(
@@ -33,8 +34,27 @@ export function UserShortcut({...props}){
 
 export function UserPanel({...props}){
 
+
+    let userPanelRef = useRef()
+
+    useEffect(() => {
+
+        let handler = (event)=>{
+            if (!userPanelRef.current?.contains(event.target)){
+                props.setVisible(false)
+            }
+        }
+
+        document.addEventListener("mousedown", handler)
+
+        return () => {
+            document.removeEventListener("mousedown", handler)
+        }
+   })
+
     return props.visible ? (
-        <div className="bg-black-900 w-80 inline-block absolute top-16 right-2 text-lg border-4 border-white-900/25 rounded-xl max-md:hidden">
+        <div className="bg-black-900 w-80 inline-block absolute top-16 right-2 text-lg border-4 border-white-900/25 rounded-xl max-md:hidden" 
+            ref={userPanelRef}>
                         
                         <div className="flex bg-white-900/10 w-full justify-between p-7 rounded-xl border-black-900">
                             <UserShortcut width="w-8" height="h-8"/>
@@ -66,26 +86,33 @@ export function UserPanel({...props}){
 
 export function MobilePanel({...props}){
     return props.visible ? (
-        <div className="w-full h-screen max-h-screen overflow-hidden bg-black-900 absolute flex flex-col md:hidden">
-        <div className="flex flex-col relative p-10 text-3xl gap-7">
+        <div className="w-full h-screen max-h-screen overflow-hidden bg-black-900 absolute flex flex-col md:hidden pt-12">
+        <div className="flex flex-col relative p-10 text-3xl gap-12 font-semibold">
         <Link href={"login"}>
-                            <div className="bg-black-900 rounded-md p-4 border-2  mb-4 opacity-90 transition-all
+                            <div className="bg-black-900 rounded-md p-4 border-2  mb-4 opacity-90 transition-all text-center
                                             hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
-                                            active:opacity-80
+                                            active:opacity-80 
                                             " onClick={props.onClick}>
                                 Sign In
                             </div>
         </Link>
 
         <Link href={"register"}>
-                            <div className="bg-black-900 rounded-md p-4 border-2 opacity-90 transition-all 
+                            <div className="bg-black-900 rounded-md p-4 border-2 opacity-90 transition-all text-center
                                             hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
                                             active:opacity-80
                                             " onClick={props.onClick}>
                                 Sign Up
                             </div>
         </Link>
-        <Button/>
+
+        <div className="bg-black-900 rounded-md p-4 border-2 opacity-90 transition-all text-center
+                                            hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                            active:opacity-80
+                                            " onClick={props.onClick}>
+                                Cart
+        </div>
+
         </div>
         </div>
     ) : <></>

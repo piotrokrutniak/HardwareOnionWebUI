@@ -5,16 +5,26 @@ import Image from "next/image";
 import onion from "../../media/logo/onion.svg"
 import { Button, ButtonMain, MobilePanel, SvgComponent, UserPanel, UserShortcut } from "./navbar.elements";
 import { ExitIcon, HamburgerIcon } from "../icons";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function NavBar(){
     const [visible, setVisible] = useState(false)
+    const [mobileVisible, setMobileVisible] = useState(false)
+    
+
+    
 
     function Toggle(){
-        console.log(visible); 
         return setVisible(!visible)
     }
 
+    function ToggleMobile(){
+        return setMobileVisible(!mobileVisible)
+    }
+
+    function HandleRedirection(){
+        return setVisible(false), setMobileVisible(false)
+    }
     return(
         <nav className="sticky top-0 z-50 h-14 max-w-qhd m-auto bg-black-900">
             <div className="px-6 h-14 flex justify-between font-mono text-2xl flex-column font-semibold relative">
@@ -31,19 +41,17 @@ export default function NavBar(){
                     <UserShortcut className="ml-4 active:opacity-80" onClick={Toggle}/>
                     
                 </div>
-                <div className="h-10 w-10 md:hidden hover:cursor-pointer active:opacity-80 transition-all" onClick={Toggle}>
+                <div className="h-10 w-10 md:hidden hover:cursor-pointer active:opacity-80 transition-all" onClick={ToggleMobile}>
 
-                    {visible ? 
+                    {mobileVisible ? 
                     <ExitIcon className="w-14 h-14 mb-auto mt-auto" fill="white"/> :
                     <HamburgerIcon className="w-14 h-14 mb-auto mt-auto"/>
                     }
                 </div>
-                <UserPanel visible={visible} onClick={Toggle}/>
+                <UserPanel visible={visible} onClick={HandleRedirection} setVisible={setVisible}/>
                 
             </div>
-                <MobilePanel visible={visible} onClick={Toggle}/>
+                <MobilePanel visible={mobileVisible} onClick={HandleRedirection}/>
         </nav>
     )
 }
-
-//<Image className="fill-white h-9 my-auto text-cyan-500"  src={onion} width={40} height={30} alt="Onion Logo"/>
