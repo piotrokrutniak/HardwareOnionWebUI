@@ -9,7 +9,7 @@ import Button from "../ui components/button"
 export function ProductInfoSection({...props}){
 
     return(
-        <div className='bg-cornflower_blue-50 bg-opacity-5 max-w-qhd m-auto p-10 max-850:p-2'>
+        <div className='bg-cornflower_blue-100/20 bg-opacity-5 max-w-qhd m-auto p-10 max-850:p-2'>
             
             
             <section id="photos-section" className="my-5">
@@ -34,7 +34,7 @@ export function ProductInfoSection({...props}){
                             <div className="text-xl relative h-8 text-turquoise-50"> Tomorrow </div>
                         </div>
                     </div>
-                    <div className="bg-white-900/10 w-full max-h-full h-72 p-3 text-md grid grid-cols-2 max-sm:grid-cols-1 gap-2 overflow-y-auto">
+                    <div className="bg-cornflower_blue-100/20 w-full max-h-full h-72 p-3 text-md grid grid-cols-2 max-sm:grid-cols-1 gap-2 overflow-y-auto">
 
                         {/* Map these with a limit */}
                         <ProductDetails id={props.id}/>

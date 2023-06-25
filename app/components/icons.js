@@ -1,5 +1,7 @@
 import react from "react"
 
+//Replace stroke with tailwind stroke-xyz
+
 export function HamburgerIcon(props){ 
     return (
     <svg
@@ -30,7 +32,7 @@ export function ExitIcon(props){
     viewBox="0 0 32 32"
     {...props}
   >
-    <path stroke={props.color ?? "white"}
+    <path 
       d="m18.8 16 5.5-5.5c.8-.8.8-2 0-2.8-.3-.4-.8-.7-1.3-.7s-1 .2-1.4.6L16 13.2l-5.5-5.5c-.8-.8-2.1-.8-2.8 0-.4.3-.7.8-.7 1.4s.2 1 .6 1.4l5.5 5.5-5.5 5.5c-.3.4-.6.9-.6 1.5 0 .5.2 1 .6 1.4.4.4.9.6 1.4.6.5 0 1-.2 1.4-.6l5.5-5.5 5.5 5.5c.8.8 2.1.8 2.8 0 .8-.8.8-2.1 0-2.8L18.8 16z" />
   </svg>
 )}
@@ -198,6 +200,64 @@ export function UserIcon({...props}){
         <circle cx={12} cy={7} r={4} />
       </g>
     </svg>
+  )
+}
+
+export function TrashIcon({...props}){
+  return(
+    <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={props.width ?? 80}
+    height={props.height ?? 80}
+    fill="none"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path
+      stroke={props.color ?? "white"}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M14 10v7m-4-7v7M6 6v11.8c0 1.12 0 1.68.218 2.108a2 2 0 0 0 .874.874c.427.218.987.218 2.105.218h5.606c1.118 0 1.677 0 2.104-.218.377-.192.683-.498.875-.874.218-.428.218-.987.218-2.105V6M6 6h2M6 6H4m4 0h8M8 6c0-.932 0-1.398.152-1.765a2 2 0 0 1 1.082-1.083C9.602 3 10.068 3 11 3h2c.932 0 1.398 0 1.765.152a2 2 0 0 1 1.083 1.083C16 4.602 16 5.068 16 6m0 0h2m0 0h2"
+    />
+  </svg>
+  )
+}
+
+export function PlusIcon({...props}){
+  return(
+    <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={props.width ?? 80}
+    height={props.height ?? 80}
+    viewBox="0 -0.5 21 21"
+    {...props}
+  >
+    <path
+      fill={props.color ?? "white"}
+      fillRule="evenodd"
+      d="M14.7 10c0 .552-.47 1-1.05 1h-2.1v2c0 .552-.47 1-1.05 1-.58 0-1.05-.448-1.05-1v-2h-2.1c-.58 0-1.05-.448-1.05-1s.47-1 1.05-1h2.1V7c0-.552.47-1 1.05-1 .58 0 1.05.448 1.05 1v2h2.1c.58 0 1.05.448 1.05 1m-4.2 8c-4.632 0-8.4-3.589-8.4-8s3.768-8 8.4-8c4.632 0 8.4 3.589 8.4 8s-3.768 8-8.4 8m0-18C4.7 0 0 4.477 0 10s4.7 10 10.5 10S21 15.523 21 10 16.3 0 10.5 0"
+    />
+  </svg>
+  )
+}
+
+export function ExpandIcon({...props}){
+  return(
+    <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={props.width ?? 80}
+    height={props.height ?? 80}
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M10 19H5v-5m9-9h5v5"
+    />
+  </svg>
   )
 }
 

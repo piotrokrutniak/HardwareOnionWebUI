@@ -62,7 +62,7 @@ export function FilterSection({...props}){
         <div className={`flex ${style}`}>
 
             <div className="h-full top-0 w-64 p-5 mt-20 flex-shrink-0 border-r-2 
-                max-850:absolute max-850:right-full max-850:mt-0
+                max-850:absolute max-850:right-full max-850:mt-0 
                 ">
                 <MajorTitleSpan text="Filters"/>
 
@@ -91,11 +91,13 @@ export function FilterSection({...props}){
                 <Button text="Apply" color="bg-cornflower_blue-400"/>
                 
             </div>
-            <div className="h-full w-full p-5 bg-cornflower_blue-50 bg-opacity-20 ">
+            <div className="h-full w-full p-5 bg-cornflower_blue-100/25">
                 <SortSection dropdownValue={dropdownValue} setDropdownValue={UpdateOrderByProperty}/>
                 <div className="flex mb-8 space-x-3 850:space-x-0">
                 <Button className="850:hidden min-w-fit h-14 max-md:w-1/5 text-lg mt-8" text="FILTERS" color="bg-cornflower_blue-400" icon={<FilterIcon color="white" fill="none" className="w-5 h-5 inline ml-1 relative"/>}/>
-                <SearchButton text="BROWSE" className={"h-14"} icon={<SearchIcon color="white" className="w-5 h-5 inline ml-1 relative"/>} color="bg-cornflower_blue-400"/>
+                <Button text="BROWSE" icon={<SearchIcon color="white" className="w-7 h-7 relative my-auto"/>} 
+                    textClassName="uppercase text-lg font-semibold flex gap-1 my-auto" 
+                    className="py-3 px-5 w-full max-xs:w-2/3 max-xs:px-2 justify-center flex mt-8" height="h-14" color="bg-cornflower_blue-400"/>
                 </div>
 
                 <Products setProductSet={UpdateProductSet} productSet={...productSet} currentPage={currentPage} setMaxPage={UpdateMaxPage} setCurrentPage={ChangePage} maxPage={maxPage} orderBy={dropdownValue}/>
@@ -127,7 +129,6 @@ export function ListMember({...props}){
 
 export function SortSection({...props}){
     const [priceRange, setPriceRange] = useState([0, 10000])
-
     return(
         <div className="grid grid-rows-2 grid-flow-col gap-x-5 columns-3 border-b-2 border-indigo-50 border-solid
                         max-lg:grid-rows-2 max-lg:grid-cols-2

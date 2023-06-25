@@ -1,11 +1,15 @@
-import { ProductInfoSection } from "./productpage.elements";
+"use client";
 import React, { useReducer, useState, useEffect } from 'react'
 import { GetApiEndpoint } from '@/app.config';
-import GetProduct from "@/app/(api methods)/GetProduct";
+import ProductPage from '@/app/components/product page/productpage';
+import { UpdateProductForm } from '@/app/components/user page/admin panel/forms/product/updateproduct';
+import GetProduct from '@/app/(api methods)/GetProduct';
 
-    
 
-export default function ProductPage({...props}){
+
+export default function UpdateProduct(pageData) {
+    let id = pageData.params.id
+
     const [isLoading, setIsLoading] = useState(true)
     const [productData, setProductData] = useState([])
 
@@ -13,7 +17,7 @@ export default function ProductPage({...props}){
         setIsLoading(true)
         let mounted = true
         
-        GetProduct(props.userId).then(p => {
+        GetProduct(id).then(p => {
             if(mounted){
                 setProductData(p.data)
             }
@@ -21,9 +25,9 @@ export default function ProductPage({...props}){
         return () => mounted = false;
     }, [])
 
-    return productData ? (
+  return productData ? (
         
-        <ProductInfoSection isLoading={isLoading} productData={productData} id={props.userId}/>
-        
-    ) : <div>Loading</div>
-    }
+    <UpdateProductForm isLoading={isLoading} productData={productData} id={id}/>
+    
+) : <div>Loading</div>
+}

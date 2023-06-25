@@ -90,7 +90,8 @@ export function MobilePanel({...props}){
         <div className="flex flex-col relative p-10 text-3xl gap-12 font-semibold">
         <Link href={"login"}>
                             <div className="bg-black-900 rounded-md p-4 border-2  mb-4 opacity-90 transition-all text-center
-                                            hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                            hover:cursor-pointer hover:border-turquoise-50 hover:opacity-100 hover:border-collapse
+                                            hover:bg-gradient-to-r from-cornflower_blue-500 to-turquoise-50
                                             active:opacity-80 
                                             " onClick={props.onClick}>
                                 Sign In
@@ -99,7 +100,8 @@ export function MobilePanel({...props}){
 
         <Link href={"register"}>
                             <div className="bg-black-900 rounded-md p-4 border-2 opacity-90 transition-all text-center
-                                            hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                            hover:cursor-pointer hover:border-turquoise-50 hover:opacity-100 hover:border-collapse
+                                            hover:bg-gradient-to-r from-cornflower_blue-500 to-turquoise-50
                                             active:opacity-80
                                             " onClick={props.onClick}>
                                 Sign Up
@@ -107,7 +109,8 @@ export function MobilePanel({...props}){
         </Link>
 
         <div className="bg-black-900 rounded-md p-4 border-2 opacity-90 transition-all text-center
-                                            hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                            hover:cursor-pointer hover:border-turquoise-50 hover:opacity-100 hover:border-collapse
+                                            hover:bg-gradient-to-r from-cornflower_blue-500 to-turquoise-50
                                             active:opacity-80
                                             " onClick={props.onClick}>
                                 Cart
