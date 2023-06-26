@@ -1,18 +1,25 @@
 import GetDetailTypes from "@/app/(api methods)/GetDetailTypes"
 import GetProductDetails from "@/app/(api methods)/GetProductDetails"
+import GetProductTypes from "@/app/(api methods)/GetProductTypes"
 import { ExitIcon, ExpandIcon, PlusIcon, ShoppingCartSVG, TrashIcon } from "@/app/components/icons"
 import Button from "@/app/components/ui components/button"
 import { Dropdown, SortDropdown } from "@/app/components/ui components/dropdown"
 import Spinner from "@/app/components/ui components/spinner"
+import TextArea from "@/app/components/ui components/textarea"
 import TextBox from "@/app/components/ui components/textbox"
+import ValidatedTextBox from "@/app/components/ui components/textboxvalidated"
 import { useEffect, useState } from "react"
 
 export function AddProductForm({...props}){
     const [popupActive, setPopupActive] = useState(false)
     const [productDetails, setProductDetails] = useState([])
+    const [productTypes, setProductTypes] = useState([])
     const [displayExpand, setDisplayExpand] = useState(false);
+    const [isProductTypeLoading, setIsProductTypeLoading] = useState(false);
 
-
+    const intRegex = new RegExp("^[0-9]*$", "gm")
+    const decimalRegex = new RegExp("^[0-9]*\\.[0-9]{0,2}$", "gm")
+    
     const [productData, setProductData] = useState({
         name: "",
         description: "",
@@ -34,22 +41,61 @@ export function AddProductForm({...props}){
         console.log(productDetails)
     }
 
+    function UpdateProductName(newValue){
+        return setProductData({...productData, name: newValue})
+    }
+
+    function UpdateProductType(newValue){
+        return setProductData({...productData, productTypeId: newValue})
+    }
+
+    function UpdateProductPrice(newValue){
+        if(decimalRegex.test(newValue)){
+            return setProductData({...productData, price: newValue})
+        }
+        else if(intRegex.test(newValue)){
+            return setProductData({...productData, price: newValue})
+        }
+    }
+
+    function UpdateProductDesc(newValue){
+        return setProductData({...productData, description: newValue})
+    }
+
+    
+    
+    useEffect(() => {
+        setIsProductTypeLoading(true)
+        let mounted = true
+
+        GetProductTypes().then(p => {
+            if(mounted){
+                setProductTypes(p.data)
+                console.log(p.data)
+            }
+        }).then(setIsProductTypeLoading(false)).then(console.log(productTypes));
+
+        return () => mounted = false;
+    }, [])
+
+
     //upload product then details, data validated by server
 
     return(
         <div className='bg-cornflower_blue-100/20 bg-opacity-5 max-w-qhd m-auto p-10 max-850:p-2'>
             
             
-            <section id="photos-section" className="my-5">
+            <section id="photos-section" className="my-5 max-lg:my-0">
                 <div className="w-full flex max-lg:flex-col">
                 
-                <div id="main-photo" className="h-96 w-96 flex-shrink-0 mr-3 mb-5 max-lg:w-full relative">
-                <div className="fixed h-96 w-96">
+                <div id="main-photo" className="lg:h-auto lg:w-96 max-xs:mx-auto flex-shrink-0 mr-3 lg:mb-5 max-lg:w-full relative ">
+                <div className="lg:fixed h-auto lg:w-96 max-lg:bg-cornflower_blue-50/5 max-lg:pb-3">
                     <img src="https://media.istockphoto.com/id/936307606/vector/red-sliced-onion-watercolor-hand-drawn-illustration-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=q1au5WBcEZKQD15ji-E_6pEKDIwcxX5nXBU54yi5cyc="
-                         className="h-full object-cover max-lg:h-80 max-lg:m-auto sticky top-0"
+                         className="h-96 max-lg:h-112 object-cover  max-lg:m-auto lg:sticky top-0"
                     />
-                    <div id="photo-slider" className="bg-black-900 h-24 w-96 mt-3 mr-3 flex-shrink-0"></div>
-                    <div className="h-96 w-96 hover:bg-black-900/60 active:bg-black-900/80 cursor-pointer transition-all absolute top-0 flex items-center justify-center content" 
+                    <div id="photo-slider" className="bg-black-900 h-24 max-lg:hidden w-96 mt-3 mr-3 flex-shrink-0"></div>
+                    <div className="h-96 max-lg:h-112 w-full hover:bg-black-900/60 active:bg-black-900/80 cursor-pointer transition-all absolute top-0 flex items-center justify-center content
+                        max-lg" 
                         onMouseEnter={() => setDisplayExpand(true)} onMouseLeave={() => setDisplayExpand(false)}>
                         <ExpandIcon className={`${displayExpand ? "scale-100" : "hidden"} stroke-white-900 fill-transparent hover:scale-150 active:scale-100 transition-all`}/>
                     </div>
@@ -58,11 +104,12 @@ export function AddProductForm({...props}){
                 </div>
 
                 <div id="info-section" className="h-auto bg-cornflower_blue-50/5 w-full overflow-y-auto">
-                    <div id="info-section" className="bg-black-900 h-auto w-full flex justify-between p-3">
+                    <div id="info-section" className="bg-black-900 h-auto w-full flex gap-8 justify-between p-3 relative">
                         <div className="h-auto">
                             <div className="h-auto text-3xl mb-2"> 
-                                <TextBox inputStyle="bg-black-900/25 h-14 rounded-md border-turquoise-50/80 active:border-turquoise-50 " 
-                                    label={false} defaultValue={props.productData.name} placeHolder="Name" wrapperStyle="h-auto"/>
+                                <TextBox inputStyle="bg-black-900/25 h-14 w-full rounded-md border-turquoise-50/80 active:border-turquoise-50 " 
+                                    label={false} defaultValue={props.productData.name} placeHolder="Name" wrapperStyle="h-auto"
+                                    onChange={UpdateProductName}/>
                             </div>
                             <div className="h-auto text-xl"> 
                                 <TextBox inputStyle="bg-black-900/25 rounded-md border-turquoise-50/80 active:border-turquoise-50 " 
@@ -70,15 +117,26 @@ export function AddProductForm({...props}){
                             </div>
                         </div>
 
-                        <div className="max-lg:hidden">
-                            <Dropdown dropdownValues={["xd", "lol", "ay"]}/>
+                        <div className="bottom-0 flex flex-col-reverse">
+                            <Dropdown dropdownValues={productTypes} setDropdownValue={UpdateProductType} showLabel={true} label="Product Type"/>
                         </div>
                     </div>
-                    <div className="w-full h-auto p-3 grid-flow-row-dense text-md grid grid-cols-2 max-sm:grid-cols-1 gap-2">
-                        <ProductDetails productDetails={productDetails} setProductDetails={setProductDetails} AddProductDetail={AddProductDetail} id={props.id}/>
+                    <div>
+                        <div className="text-xl p-4 bg-black-900/70">Description</div>
+                        <div className="text-lg p-4 ">
+                            <TextArea inputStyle="bg-black-900/25 h-32 min-h-fit rounded-md border-turquoise-50/80 active:border-turquoise-50 " 
+                                    label={false} placeHolder="Description" defaultValue={props.productData.description} 
+                                    type="textarea" wrapperStyle="h-auto" onChange={UpdateProductDesc}/>
+                            
+                        </div>
                     </div>
 
-                    
+                    <div>
+                        <div className="text-xl p-4 bg-black-900/70">Specification</div>
+                        <div className="w-full h-auto p-3 grid-flow-row-dense text-md grid grid-cols-2 max-sm:grid-cols-1 gap-2">
+                            <ProductDetails productDetails={productDetails} setProductDetails={setProductDetails} AddProductDetail={AddProductDetail} id={props.id}/>
+                        </div>
+                    </div>
                 </div>
 
                 </div>
@@ -86,8 +144,9 @@ export function AddProductForm({...props}){
                 <div id="photo-slider" className="bg-black-900 h-24 w-96 mt-3 mr-3 flex-shrink-0 max-lg:hidden"></div>
                 <div id="button-section" className="bg-black-900 h-24 w-full mt-3 flex justify-between p-3 gap-3 font-semibold"> 
                     <div className="flex flex-col justify-center relative text-xl"> 
-                        <TextBox inputStyle="bg-black-900/25 h-14 rounded-md border-turquoise-50/80 active:border-turquoise-50 " 
-                            label={false} placeHolder="Price" defaultValue={props.productData.price} wrapperStyle="h-auto"/>
+                        <ValidatedTextBox inputStyle="bg-black-900/25 h-14 rounded-md border-turquoise-50/80 active:border-turquoise-50 " 
+                            label={false} placeHolder="Price" value={productData.price}
+                            onChange={UpdateProductPrice} defaultValue={productData.price} wrapperStyle="h-auto"/>
                     </div>
                     <div className="flex flex-row gap-3">
                         <Button text="ADD" icon={<PlusIcon className="w-7 h-7 relative my-auto"/>} onClick={() => UploadProduct()}
@@ -199,8 +258,9 @@ function Detail({...props}){
                     defaultValue={data.detailType.name} 
                     setDropdownValue={props.setDropdownValue} 
                     dropdownValue={props.dropdownValue}
-                    detailId={data.id}
-                    key={data.id}/>
+                    id={data.id}
+                    key={data.id}
+                    formInput={true}/>
                     
                     
                 </div> 
