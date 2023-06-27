@@ -1,6 +1,9 @@
 import GetDetailTypes from "@/app/(api methods)/GetDetailTypes"
+import GetManufacturers from "@/app/(api methods)/GetManufacturers"
 import GetProductDetails from "@/app/(api methods)/GetProductDetails"
 import GetProductTypes from "@/app/(api methods)/GetProductTypes"
+import PostProductsDetails from "@/app/(api methods)/PostDetails"
+import PostProduct from "@/app/(api methods)/PostProduct"
 import { ExitIcon, ExpandIcon, PlusIcon, ShoppingCartSVG, TrashIcon } from "@/app/components/icons"
 import Button from "@/app/components/ui components/button"
 import { Dropdown, SortDropdown } from "@/app/components/ui components/dropdown"
@@ -14,19 +17,22 @@ export function AddProductForm({...props}){
     const [popupActive, setPopupActive] = useState(false)
     const [productDetails, setProductDetails] = useState([])
     const [productTypes, setProductTypes] = useState([])
+    const [manufacturers, setManufacturers] = useState([])
     const [displayExpand, setDisplayExpand] = useState(false);
     const [isProductTypeLoading, setIsProductTypeLoading] = useState(false);
+    const [isManufacturersLoading, setIsManufacturersLoading] = useState(false);
 
     const intRegex = new RegExp("^[0-9]*$", "gm")
     const decimalRegex = new RegExp("^[0-9]*\\.[0-9]{0,2}$", "gm")
     
     const [productData, setProductData] = useState({
+        id: undefined,
         name: "",
         description: "",
-        price: "",
-        quantity: "",
-        productTypeId: "",
-        manufacturerId: ""
+        price: 0.00,
+        quantity: 0,
+        productTypeId: 0,
+        manufacturerId: 0
     })
 
     function AddProductDetail(detail){
@@ -34,11 +40,21 @@ export function AddProductForm({...props}){
         return setProductDetails([...productDetails])
     }
 
-    function UploadProduct(){
+    async function UploadProduct(){
         //upload product
+        if(productData.id == undefined){
+            await PostProduct(productData).then((p) => productData.id = p.data)
+        }
+
         console.log(productData)
         //use uploaded product response with id to upload details
-        console.log(productDetails)
+
+        productDetails.forEach(async (element) => {
+            element.productId = productData.id
+            await PostProductsDetails(element).then((p) => console.log(p))
+        });
+
+        return 
     }
 
     function UpdateProductName(newValue){
@@ -47,6 +63,10 @@ export function AddProductForm({...props}){
 
     function UpdateProductType(newValue){
         return setProductData({...productData, productTypeId: newValue})
+    }
+
+    function UpdateManufacturer(newValue){
+        return setProductData({...productData, manufacturerId: newValue})
     }
 
     function UpdateProductPrice(newValue){
@@ -66,14 +86,22 @@ export function AddProductForm({...props}){
     
     useEffect(() => {
         setIsProductTypeLoading(true)
+        setIsManufacturersLoading(true)
         let mounted = true
 
         GetProductTypes().then(p => {
             if(mounted){
                 setProductTypes(p.data)
-                console.log(p.data)
+                productData.productTypeId = p.data[0].id
             }
-        }).then(setIsProductTypeLoading(false)).then(console.log(productTypes));
+        }).then(setIsProductTypeLoading(false));
+
+        GetManufacturers().then(p => {
+            if(mounted){
+                setManufacturers(p.data)
+                productData.manufacturerId = p.data[0].id
+            }
+        }).then(setIsManufacturersLoading(false));
 
         return () => mounted = false;
     }, [])
@@ -103,7 +131,7 @@ export function AddProductForm({...props}){
                     
                 </div>
 
-                <div id="info-section" className="h-auto bg-cornflower_blue-50/5 w-full overflow-y-auto">
+                <div id="info-section" className="h-auto bg-cornflower_blue-50/5 w-full overflow-y-auto shadow-lg shadow-black-900/40">
                     <div id="info-section" className="bg-black-900 h-auto w-full flex gap-8 justify-between p-3 relative">
                         <div className="h-auto">
                             <div className="h-auto text-3xl mb-2"> 
@@ -112,8 +140,7 @@ export function AddProductForm({...props}){
                                     onChange={UpdateProductName}/>
                             </div>
                             <div className="h-auto text-xl"> 
-                                <TextBox inputStyle="bg-black-900/25 rounded-md border-turquoise-50/80 active:border-turquoise-50 " 
-                                    label={false} placeHolder="Manufacturer" defaultValue={props.productData.manufacturer ? props.productData.manufacturer.name : "" } wrapperStyle="h-auto"/>
+                                <Dropdown dropdownValues={manufacturers} setDropdownValue={UpdateManufacturer} showLabel={true} label="Manufacturer"/>
                             </div>
                         </div>
 
@@ -122,7 +149,7 @@ export function AddProductForm({...props}){
                         </div>
                     </div>
                     <div>
-                        <div className="text-xl p-4 bg-black-900/70">Description</div>
+                        <div className="text-xl p-4 bg-black-900/70 shadow-sm shadow-black-900/40">Description</div>
                         <div className="text-lg p-4 ">
                             <TextArea inputStyle="bg-black-900/25 h-32 min-h-fit rounded-md border-turquoise-50/80 active:border-turquoise-50 " 
                                     label={false} placeHolder="Description" defaultValue={props.productData.description} 
@@ -132,7 +159,7 @@ export function AddProductForm({...props}){
                     </div>
 
                     <div>
-                        <div className="text-xl p-4 bg-black-900/70">Specification</div>
+                        <div className="text-xl p-4 bg-black-900/70 shadow-sm shadow-black-900/40">Specification</div>
                         <div className="w-full h-auto p-3 grid-flow-row-dense text-md grid grid-cols-2 max-sm:grid-cols-1 gap-2">
                             <ProductDetails productDetails={productDetails} setProductDetails={setProductDetails} AddProductDetail={AddProductDetail} id={props.id}/>
                         </div>
@@ -182,7 +209,7 @@ export function AddProductForm({...props}){
 
 function ProductDetails({...props}){
 
-    const detObj = {"id": props.id, "detailType": "Produced", "detailTypeId": 1, "description": "", "productId": undefined}
+    const detObj = {"id": props.id, "detailType": {"name": "Parameter"}, "detailTypeId": 2, "description": "", "productId": undefined}
     const [isDetailTypeLoading, setIsDetailTypeLoading] = useState(true)
     const [detailTypes, setDetailTypes] = useState([])
 

@@ -1,31 +1,38 @@
 import GetProductDetails from "@/app/(api methods)/GetProductDetails"
 import { useEffect } from "react/cjs/react.development"
 import { useState } from "react/cjs/react.development"
-import { ShoppingCartSVG } from "../icons"
+import { ExpandIcon, ShoppingCartSVG } from "../icons"
 import Button from "../ui components/button"
 
 //discount to be added
 
 export function ProductInfoSection({...props}){
-
+    const [displayExpand, setDisplayExpand] = useState(false);
     return(
         <div className='bg-cornflower_blue-100/20 bg-opacity-5 max-w-qhd m-auto p-10 max-850:p-2'>
             
             
-            <section id="photos-section" className="my-5">
+            <section id="photos-section" className="my-5 max-lg:my-0">
                 <div className="w-full flex max-lg:flex-col">
-                <div id="main-photo" className="bg-black-900 h-96 w-96 flex-shrink-0 mr-3 mb-5 max-lg:w-full">
+                
+                <div id="main-photo" className="lg:h-auto lg:w-96 max-xs:mx-auto flex-shrink-0 mr-3 lg:mb-5 max-lg:w-full relative ">
+                <div className="lg:fixed h-auto lg:w-96 max-lg:bg-cornflower_blue-50/5 max-lg:pb-3">
                     <img src="https://media.istockphoto.com/id/936307606/vector/red-sliced-onion-watercolor-hand-drawn-illustration-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=q1au5WBcEZKQD15ji-E_6pEKDIwcxX5nXBU54yi5cyc="
-                         className="h-full object-cover sticky max-lg:h-80 max-lg:m-auto"
+                         className="h-96 max-lg:h-112 object-cover  max-lg:m-auto lg:sticky top-0"
                     />
-                    <div id="photo-slider" className="h-12 max-w-96 mt-3 mr-3 flex-shrink-0 min-lg:hidden max-lg:m-auto max-lg:mt-2"></div>
-                    
+                    <div id="photo-slider" className="bg-black-900 h-24 max-lg:hidden w-96 mt-3 mr-3 flex-shrink-0"></div>
+                    <div className="h-96 max-lg:h-112 w-full hover:bg-black-900/60 active:bg-black-900/80 cursor-pointer transition-all absolute top-0 flex items-center justify-center content
+                        max-lg" 
+                        onMouseEnter={() => setDisplayExpand(true)} onMouseLeave={() => setDisplayExpand(false)}>
+                        <ExpandIcon className={`${displayExpand ? "scale-100" : "hidden"} stroke-white-900 fill-transparent hover:scale-150 active:scale-100 transition-all`}/>
+                    </div>
+                </div>
                 </div>
 
-                <div id="info-section" className="bg-black-900 h-96 w-full">
-                    <div id="info-section" className="bg-black-900 h-24 w-full flex justify-between p-3">
-                        <div className="h-20">
-                            <div className="h-10 text-3xl">{props.productData.name}</div>
+                <div id="info-section" className="h-auto bg-cornflower_blue-50/5 w-full overflow-y-auto shadow-lg shadow-black-900/40">
+                    <div id="info-section" className="bg-black-900 h-auto w-full flex gap-8 justify-between p-3 relative">
+                        <div className="h-auto">
+                            <div className="h-auto text-3xl mb-2"> {props.productData.name}</div>
                             <div className="h-8 text-xl">{props.productData.manufacturer ? props.productData.manufacturer.name : ""}</div>
                         </div>
 
@@ -34,29 +41,21 @@ export function ProductInfoSection({...props}){
                             <div className="text-xl relative h-8 text-turquoise-50"> Tomorrow </div>
                         </div>
                     </div>
-                    <div className="bg-cornflower_blue-100/20 w-full max-h-full h-72 p-3 text-md grid grid-cols-2 max-sm:grid-cols-1 gap-2 overflow-y-auto">
+                    <div>
+                        <div className="text-xl p-4 bg-black-900/70 shadow-sm shadow-black-900/40">Description</div>
+                        <div className="text-lg p-4 ">
+                            
+                            {props.productData.description} 
+
+                            
+                        </div>
+                    </div>
+                    <div className="text-xl p-4 bg-black-900/70 shadow-sm shadow-black-900/40">Specification</div>
+                    <div className="w-full h-auto p-3 grid-flow-row-dense text-md grid grid-cols-2 max-sm:grid-cols-1 gap-2">
 
                         {/* Map these with a limit */}
+                        
                         <ProductDetails id={props.id}/>
-                        <div>
-                            <div className="w-full bg-gradient-to-r from-black-900 to-transparent text-white-900 p-1"> Memory Type </div>
-                            <div className="w-full text-white-900 p-1"> GDDR5 </div>
-                        </div>
-                        <div>
-                            <div className="w-full bg-gradient-to-r from-black-900 to-black-900/5 text-white-900 p-1"> Memory Size </div>
-                            <div className="w-full text-white-900 p-1"> 8GB </div>
-                        </div>
-                        <div>
-                            <div className="w-full bg-gradient-to-r from-black-900 to-black-900/5 text-white-900 p-1"> Memory Size </div>
-                            <div className="w-full text-white-900 p-1"> 8GB </div>
-                        </div>
-                        <div>
-                            <div className="w-full bg-gradient-to-r from-black-900 to-black-900/5 text-white-900 p-1"> Memory Size </div>
-                            <div className="w-full text-white-900 p-1"> 8GB </div>
-                        </div>
-                        
-                        
-
                     </div>
                 </div>
                 
