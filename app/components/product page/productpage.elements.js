@@ -1,13 +1,14 @@
 import GetProductDetails from "@/app/(api methods)/GetProductDetails"
 import { useEffect } from "react/cjs/react.development"
 import { useState } from "react/cjs/react.development"
-import { ExpandIcon, ShoppingCartSVG } from "../icons"
+import { ArrowLeftIcon, ExpandIcon, ShoppingCartSVG } from "../icons"
 import Button from "../ui components/button"
 
 //discount to be added
 
 export function ProductInfoSection({...props}){
     const [displayExpand, setDisplayExpand] = useState(false);
+    const [displayDescription, setDisplayDescription] = useState(true)
     return(
         <div className='bg-cornflower_blue-100/20 bg-opacity-5 max-w-qhd m-auto p-10 max-850:p-2'>
             
@@ -18,9 +19,8 @@ export function ProductInfoSection({...props}){
                 <div id="main-photo" className="lg:h-auto lg:w-96 max-xs:mx-auto flex-shrink-0 mr-3 lg:mb-5 max-lg:w-full relative ">
                 <div className="lg:fixed h-auto lg:w-96 max-lg:bg-cornflower_blue-50/5 max-lg:pb-3">
                     <img src="https://media.istockphoto.com/id/936307606/vector/red-sliced-onion-watercolor-hand-drawn-illustration-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=q1au5WBcEZKQD15ji-E_6pEKDIwcxX5nXBU54yi5cyc="
-                         className="h-96 max-lg:h-112 object-cover  max-lg:m-auto lg:sticky top-0"
-                    />
-                    <div id="photo-slider" className="bg-black-900 h-24 max-lg:hidden w-96 mt-3 mr-3 flex-shrink-0"></div>
+                         className="h-96 max-lg:h-112 object-cover  max-lg:m-auto lg:sticky top-0"/>
+                    <div id="photo-slider" className="bg-black-900 h-24 max-lg:hidden w-96 mt-3 mr-3 flex-shrink-0"/>
                     <div className="h-96 max-lg:h-112 w-full hover:bg-black-900/60 active:bg-black-900/80 cursor-pointer transition-all absolute top-0 flex items-center justify-center content
                         max-lg" 
                         onMouseEnter={() => setDisplayExpand(true)} onMouseLeave={() => setDisplayExpand(false)}>
@@ -35,30 +35,28 @@ export function ProductInfoSection({...props}){
                             <div className="h-auto text-3xl mb-2"> {props.productData.name}</div>
                             <div className="h-8 text-xl">{props.productData.manufacturer ? props.productData.manufacturer.name : ""}</div>
                         </div>
-
                         <div className="max-lg:hidden">
                             <div className="text-xl h-10 flex flex-col-reverse max-lg:text-base"><div className="relative border-b-4 border-transparent"> Order now and receive by: </div></div>
                             <div className="text-xl relative h-8 text-turquoise-50"> Tomorrow </div>
                         </div>
                     </div>
-                    <div>
-                        <div className="text-xl p-4 bg-black-900/70 shadow-sm shadow-black-900/40">Description</div>
-                        <div className="text-lg p-4 ">
-                            
-                            {props.productData.description} 
 
-                            
+                    <div>
+                        <div className="text-xl p-4 bg-black-900/70 shadow-sm shadow-black-900/40 flex justify-between">
+                            <div>Description</div>
+                            <div onClick={() => setDisplayDescription(!displayDescription)}>
+                                <ArrowLeftIcon className={`${!displayDescription ? "-rotate-90" : "rotate-90"} h-6 w-6 transition-all cursor-pointer`}/>
+                            </div>
+                        </div>
+                        <div className={`${!displayDescription ? "max-h-0 p-1 text-transparent" : "max-h-screen p-4"} text-lg transition-all overflow-hidden`}>
+                            {props.productData.description} 
                         </div>
                     </div>
                     <div className="text-xl p-4 bg-black-900/70 shadow-sm shadow-black-900/40">Specification</div>
-                    <div className="w-full h-auto p-3 grid-flow-row-dense text-md grid grid-cols-2 max-sm:grid-cols-1 gap-2">
-
-                        {/* Map these with a limit */}
-                        
+                    <div className="w-full h-auto p-3 grid-flow-row-dense text-lg grid grid-cols-2 max-sm:grid-cols-1 gap-2">
                         <ProductDetails id={props.id}/>
                     </div>
                 </div>
-                
 
                 </div>
                 <div className="w-full flex">
@@ -73,15 +71,9 @@ export function ProductInfoSection({...props}){
                                 icon={<ShoppingCartSVG color="black" className="w-7 h-7 inline ml-1 relative"/>}/> 
                         <Button text="CART" height={""} className="text-xl text-black-900 p-8 px-8 max-xs:px-4 max-xs:text-lg" textClassName="-top-1/2 -translate-y-1/2"/> 
                     </div>
-                    
                 </div>
                 </div>
-                
-                
-            
             </section>
-
-
         </div>
     )
 }
@@ -119,7 +111,7 @@ function Detail({...props}){
 
     return(
         <div className={`${data.detailType.name == "Description" ? "col-span-2 max-sm:col-span-1" : ""}`}>
-            <div className="w-full bg-gradient-to-r from-black-900 to-transparent text-white-900 p-1"> {data.detailType.name} </div>
+            <div className="w-full bg-gradient-to-r from-black-900 to-transparent text-white-900 p-1 px-2"> {data.detailType.name} </div>
             <div className="w-full text-white-900 p-1"> 
                 {data.description}
             </div>

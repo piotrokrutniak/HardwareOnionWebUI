@@ -4,6 +4,7 @@ import GetProductDetails from "@/app/(api methods)/GetProductDetails"
 import GetProductTypes from "@/app/(api methods)/GetProductTypes"
 import PostProductsDetails from "@/app/(api methods)/PostDetails"
 import PostProduct from "@/app/(api methods)/PostProduct"
+import { GetUser } from "@/app/(global methods)/User"
 import { ExitIcon, ExpandIcon, PlusIcon, ShoppingCartSVG, TrashIcon } from "@/app/components/icons"
 import Button from "@/app/components/ui components/button"
 import { Dropdown, SortDropdown } from "@/app/components/ui components/dropdown"
@@ -14,6 +15,9 @@ import ValidatedTextBox from "@/app/components/ui components/textboxvalidated"
 import { useEffect, useState } from "react"
 
 export function AddProductForm({...props}){
+    //Check for user roles in cookies
+    //if()
+
     const [popupActive, setPopupActive] = useState(false)
     const [productDetails, setProductDetails] = useState([])
     const [productTypes, setProductTypes] = useState([])
@@ -132,7 +136,7 @@ export function AddProductForm({...props}){
                 </div>
 
                 <div id="info-section" className="h-auto bg-cornflower_blue-50/5 w-full overflow-y-auto shadow-lg shadow-black-900/40">
-                    <div id="info-section" className="bg-black-900 h-auto w-full flex gap-8 justify-between p-3 relative">
+                    <div id="general-info-section" className="bg-black-900 h-auto w-full flex gap-8 justify-between p-3 relative">
                         <div className="h-auto">
                             <div className="h-auto text-3xl mb-2"> 
                                 <TextBox inputStyle="bg-black-900/25 h-14 w-full rounded-md border-turquoise-50/80 active:border-turquoise-50 " 

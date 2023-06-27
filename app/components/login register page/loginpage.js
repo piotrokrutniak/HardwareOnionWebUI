@@ -8,6 +8,7 @@ import PostAuthenticate from "@/app/(api methods)/PostAuthenticate";
 import Cookies from "universal-cookie";
 import Spinner from "../ui components/spinner";
 import { useRouter } from 'next/navigation'
+import { ClearUser } from "@/app/(global methods)/User";
 
 export default function LoginForm(){
     const [formSubmitted, setFormSubmitted] = useState(false)
@@ -25,6 +26,7 @@ export default function LoginForm(){
             "password": password,
         }
         
+        ClearUser()
 
         PostAuthenticate(data).then((response) => 
         {
@@ -33,7 +35,8 @@ export default function LoginForm(){
             {
                 setRequestSent([false, ""])
                 setFormSubmitted(true)
-                cookies.set("bearer_token", response.data.jwToken)
+                cookies.set("bearer_token", response.data.jwToken, {path: "/", maxAge: 360})
+                cookies.set("user", {email: response.data.email, roles: response.data.roles, id: response.data.id}, {path: "/", maxAge: 360})
                 setRequestSent([false, true, `${response.Message ?? "Signing in..."}`])
                 router.replace('/admin-panel')
             }

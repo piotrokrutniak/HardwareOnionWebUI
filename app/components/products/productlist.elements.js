@@ -7,6 +7,7 @@ import Button from "../ui components/button";
 import Spinner from "../ui components/spinner";
 import { ArrowRightIcon, ArrowLeftIcon, ArrowDoubleLeftIcon, ArrowDoubleRightIcon } from "../icons";
 import { GetApiEndpoint, GetBaseUrl } from "@/app.config";
+import { ClearUser } from "@/app/(global methods)/User";
 
 
 async function GetProducts(pageNumber = 1 , pageSize = 3, orderBy = "PriceAsc" ){
@@ -95,7 +96,7 @@ export function FilterSection({...props}){
                 <SortSection dropdownValue={dropdownValue} setDropdownValue={UpdateOrderByProperty}/>
                 <div className="flex mb-8 space-x-3 850:space-x-0">
                 <Button className="850:hidden min-w-fit h-14 max-md:w-1/5 text-lg mt-8" text="FILTERS" color="bg-cornflower_blue-400" icon={<FilterIcon color="white" fill="none" className="w-5 h-5 inline ml-1 relative"/>}/>
-                <Button text="BROWSE" icon={<SearchIcon color="white" className="w-7 h-7 relative my-auto"/>} 
+                <Button text="BROWSE" onClick={() => ClearUser()} icon={<SearchIcon color="white" className="w-7 h-7 relative my-auto"/>} 
                     textClassName="uppercase text-lg font-semibold flex gap-1 my-auto" 
                     className="py-3 px-5 w-full max-xs:w-2/3 max-xs:px-2 justify-center flex mt-8" height="h-14" color="bg-cornflower_blue-400"/>
                 </div>
@@ -231,7 +232,7 @@ export function Products({...props}){
         setIsLoading(true)
         let mounted = true
 
-        GetProducts(props.currentPage, 3, props.orderBy).then(product => {
+        GetProducts(props.currentPage, 4, props.orderBy).then(product => {
             if(mounted){
                 let newData = [...product.data]
                 props.setMaxPage(product.lastPage)
@@ -290,11 +291,11 @@ export function Product({...props}){
     //review function to be added
     //favorite button to be added in the top right corner of the product photo
     return(
-            <div className="bg-black-900 opacity-95 w-full h-80">
+            <div className="bg-black-900 opacity-95 w-full h-80 shadow-md shadow-black-900/40">
                 <Link href={`${props.baseUrl}products/${product.id}`}>
                 <div className="w-full bg-black-900 bg-opacity-20 h-48">
                     <img src="https://media.istockphoto.com/id/936307606/vector/red-sliced-onion-watercolor-hand-drawn-illustration-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=q1au5WBcEZKQD15ji-E_6pEKDIwcxX5nXBU54yi5cyc="
-                         className="w-full h-48 object-cover sticky"
+                         className="w-full h-48 object-cover active:opacity-80 sticky transition-all"
                     />
                 </div>
                 </Link>

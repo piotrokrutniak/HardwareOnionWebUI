@@ -27,14 +27,12 @@ export function ButtonMain({...props}){
 export function UserShortcut({...props}){
     return(
         <div className={`${props.className} flex hover:cursor-pointer`} onClick={props.onClick}>
-            <UserIcon className={`${props.width ?? "w-10"} ${props.height ?? "h-10"} inline border-4 rounded-full border-white-900 `}/>
+            <UserIcon className={`border-white-900 ${props.width ?? "w-10"} ${props.height ?? "h-10"} inline border-4 rounded-full`}/>
         </div>   
     )
 }
 
 export function UserPanel({...props}){
-
-
     let userPanelRef = useRef()
 
     useEffect(() => {
@@ -43,6 +41,7 @@ export function UserPanel({...props}){
             if (!userPanelRef.current?.contains(event.target)){
                 props.setVisible(false)
             }
+            props.checkUser()
         }
 
         document.addEventListener("mousedown", handler)
@@ -59,30 +58,70 @@ export function UserPanel({...props}){
                         <div className="flex bg-white-900/10 w-full justify-between p-7 rounded-xl border-black-900">
                             <UserShortcut width="w-8" height="h-8"/>
                             <div>
-                                {props.userEmail ?? "Guest"}
+                                {props.user.email ?? "Guest"}
                             </div>
                         </div>
-                        <div className="p-7">
-                            <Link href={"login"}>
-                            <div className="bg-black-900 rounded-md p-2 border-2  mb-4 opacity-90 transition-all
-                                            hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
-                                            active:opacity-80
-                                            " onClick={props.onClick}>
-                                Sign In
-                            </div>
-                            </Link>
-                            <Link href={"register"}>
-                            <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all 
-                                            hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
-                                            active:opacity-80
-                                            " onClick={props.onClick}>
-                                Sign Up
-                            </div>
-                            </Link>
+                        <div className="p-7 flex flex-col gap-5">
+                            {props.user ? <UserOptions onClick={props.onClick} signOut={props.signOut}/> : <GuestOptions onClick={props.onClick}/>}
                         </div>
                     </div>
     ) : <></>
 }
+
+function GuestOptions({...props}){
+    return(
+        <>
+            <Link href={"login"}>
+                <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all
+                               hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                active:opacity-80
+                                " onClick={props.onClick}>
+                    Sign In
+                </div>
+            </Link>
+            <Link href={"register"}>
+                <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all 
+                                hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                active:opacity-80
+                                " onClick={() => {props.onClick;}}>
+                    Sign Up
+                </div>
+            </Link>
+        </>
+    )
+}
+
+function UserOptions({...props}){
+    return(
+        <>
+            <Link href={"login"}>
+                <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all
+                               hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                active:opacity-80
+                                " onClick={props.onClick}>
+                    My Profile
+                </div>
+            </Link>
+            <Link href={"register"}>
+                <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all 
+                                hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                active:opacity-80
+                                " onClick={props.onClick}>
+                    My Orders
+                </div>
+            </Link>
+            <Link href={"/"}>
+                <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all 
+                                hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                active:opacity-80
+                                " onClick={() => {props.signOut()}}>
+                    Sign Out
+                </div>
+            </Link>
+        </>
+    )
+}
+
 
 export function MobilePanel({...props}){
     return props.visible ? (

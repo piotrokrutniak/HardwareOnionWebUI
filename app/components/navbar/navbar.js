@@ -6,13 +6,22 @@ import onion from "../../media/logo/onion.svg"
 import { Button, ButtonMain, MobilePanel, SvgComponent, UserPanel, UserShortcut } from "./navbar.elements";
 import { ExitIcon, HamburgerIcon } from "../icons";
 import { useEffect, useRef, useState } from "react";
+import { ClearUser, GetUser } from "@/app/(global methods)/User";
 
 export default function NavBar(){
     const [visible, setVisible] = useState(false)
     const [mobileVisible, setMobileVisible] = useState(false)
-    
 
-    
+    const [user, setUser] = useState(GetUser())
+
+    function SignOut(){
+        ClearUser()
+        return setUser(false)
+    }
+
+    function CheckUser(){
+        setUser(GetUser())
+    }
 
     function Toggle(){
         return setVisible(!visible)
@@ -39,7 +48,6 @@ export default function NavBar(){
                     <Button label="Deals"/>
                     <ButtonMain url="/" label=""/>
                     <UserShortcut className="ml-4 active:opacity-80" onClick={Toggle}/>
-                    
                 </div>
                 <div className="h-10 w-10 md:hidden hover:cursor-pointer active:opacity-80 transition-all" onClick={ToggleMobile}>
 
@@ -48,7 +56,7 @@ export default function NavBar(){
                     <HamburgerIcon className="w-14 h-14 mb-auto mt-auto"/>
                     }
                 </div>
-                <UserPanel visible={visible} onClick={HandleRedirection} setVisible={setVisible}/>
+                <UserPanel user={user ?? undefined} visible={visible} checkUser={CheckUser} onClick={HandleRedirection} signOut={SignOut} setVisible={setVisible}/>
                 
             </div>
                 <MobilePanel visible={mobileVisible} onClick={HandleRedirection}/>

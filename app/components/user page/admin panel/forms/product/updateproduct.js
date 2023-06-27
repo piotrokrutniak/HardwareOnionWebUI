@@ -1,6 +1,10 @@
 import GetDetailTypes from "@/app/(api methods)/GetDetailTypes"
+import GetManufacturers from "@/app/(api methods)/GetManufacturers"
 import GetProductDetails from "@/app/(api methods)/GetProductDetails"
-import { ExitIcon, PlusIcon, ShoppingCartSVG, TrashIcon } from "@/app/components/icons"
+import GetProductTypes from "@/app/(api methods)/GetProductTypes"
+import PostProductsDetails from "@/app/(api methods)/PostDetails"
+import PostProduct from "@/app/(api methods)/PostProduct"
+import { ExitIcon, ExpandIcon, PlusIcon, ShoppingCartSVG, TrashIcon } from "@/app/components/icons"
 import Button from "@/app/components/ui components/button"
 import { Dropdown, SortDropdown } from "@/app/components/ui components/dropdown"
 import Spinner from "@/app/components/ui components/spinner"
@@ -12,20 +16,116 @@ export function UpdateProductForm({...props}){
     let updatedDate = new Date(Date.parse(props.productData.lastModified)).toLocaleDateString() ?? "No Data" 
 
     const [popupActive, setPopupActive] = useState(false)
+    const [productDetails, setProductDetails] = useState([])
+    const [productTypes, setProductTypes] = useState([])
+    const [manufacturers, setManufacturers] = useState([])
+    const [displayExpand, setDisplayExpand] = useState(false);
+    const [isProductTypeLoading, setIsProductTypeLoading] = useState(false);
+    const [isManufacturersLoading, setIsManufacturersLoading] = useState(false);
+
+    const intRegex = new RegExp("^[0-9]*$", "gm")
+    const decimalRegex = new RegExp("^[0-9]*\\.[0-9]{0,2}$", "gm")
+    
+    const [productData, setProductData] = useState({
+        id: undefined,
+        name: "",
+        description: "",
+        price: 0.00,
+        quantity: 0,
+        productTypeId: 0,
+        manufacturerId: 0
+    })
+
+    function AddProductDetail(detail){
+        productDetails.push(detail)
+        return setProductDetails([...productDetails])
+    }
+
+    async function UploadProduct(){
+        //upload product
+        if(productData.id == undefined){
+            await PostProduct(productData).then((p) => productData.id = p.data)
+        }
+
+        console.log(productData)
+        //use uploaded product response with id to upload details
+
+        productDetails.forEach(async (element) => {
+            element.productId = productData.id
+            await PostProductsDetails(element).then((p) => console.log(p))
+        });
+
+        return 
+    }
+
+    function UpdateProductName(newValue){
+        return setProductData({...productData, name: newValue})
+    }
+
+    function UpdateProductType(newValue){
+        return setProductData({...productData, productTypeId: newValue})
+    }
+
+    function UpdateManufacturer(newValue){
+        return setProductData({...productData, manufacturerId: newValue})
+    }
+
+    function UpdateProductPrice(newValue){
+        if(decimalRegex.test(newValue)){
+            return setProductData({...productData, price: newValue})
+        }
+        else if(intRegex.test(newValue)){
+            return setProductData({...productData, price: newValue})
+        }
+    }
+
+    function UpdateProductDesc(newValue){
+        return setProductData({...productData, description: newValue})
+    }
 
     
+    
+    useEffect(() => {
+        setIsProductTypeLoading(true)
+        setIsManufacturersLoading(true)
+        let mounted = true
+
+        GetProductTypes().then(p => {
+            if(mounted){
+                setProductTypes(p.data)
+                productData.productTypeId = p.data[0].id
+            }
+        }).then(setIsProductTypeLoading(false));
+
+        GetManufacturers().then(p => {
+            if(mounted){
+                setManufacturers(p.data)
+                productData.manufacturerId = p.data[0].id
+            }
+        }).then(setIsManufacturersLoading(false));
+
+        return () => mounted = false;
+    }, [])
 
     return(
         <div className='bg-cornflower_blue-100/20 bg-opacity-5 max-w-qhd m-auto p-10 max-850:p-2'>
             
             
-            <section id="photos-section" className="my-5">
+            <section id="photos-section" className="my-5 max-lg:my-0">
                 <div className="w-full flex max-lg:flex-col">
-                <div id="main-photo" className="bg-black-900 h-96 w-96 flex-shrink-0 mr-3 mb-5 max-lg:w-full">
+                
+                <div id="main-photo" className="lg:h-auto lg:w-96 max-xs:mx-auto flex-shrink-0 mr-3 lg:mb-5 max-lg:w-full relative ">
+                <div className="lg:fixed h-auto lg:w-96 max-lg:bg-cornflower_blue-50/5 max-lg:pb-3">
                     <img src="https://media.istockphoto.com/id/936307606/vector/red-sliced-onion-watercolor-hand-drawn-illustration-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=q1au5WBcEZKQD15ji-E_6pEKDIwcxX5nXBU54yi5cyc="
-                         className="h-full object-cover sticky max-lg:h-80 max-lg:m-auto"
+                         className="h-96 max-lg:h-112 object-cover  max-lg:m-auto lg:sticky top-0"
                     />
-                    <div id="photo-slider" className="h-12 max-w-96 mt-3 mr-3 flex-shrink-0 min-lg:hidden max-lg:m-auto max-lg:mt-2"></div>
+                    <div id="photo-slider" className="bg-black-900 h-24 max-lg:hidden w-96 mt-3 mr-3 flex-shrink-0"></div>
+                    <div className="h-96 max-lg:h-112 w-full hover:bg-black-900/60 active:bg-black-900/80 cursor-pointer transition-all absolute top-0 flex items-center justify-center content
+                        max-lg" 
+                        onMouseEnter={() => setDisplayExpand(true)} onMouseLeave={() => setDisplayExpand(false)}>
+                        <ExpandIcon className={`${displayExpand ? "scale-100" : "hidden"} stroke-white-900 fill-transparent hover:scale-150 active:scale-100 transition-all`}/>
+                    </div>
+                </div>
                     
                 </div>
 
