@@ -221,6 +221,10 @@ module.exports = {
       },
       fontFamily:{
       'font-int': 'Inter'
+      },
+      height:{
+        '112': '28rem',
+        '128': '32rem',
       }
     },
   },

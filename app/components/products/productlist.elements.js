@@ -7,6 +7,7 @@ import Button from "../ui components/button";
 import Spinner from "../ui components/spinner";
 import { ArrowRightIcon, ArrowLeftIcon, ArrowDoubleLeftIcon, ArrowDoubleRightIcon } from "../icons";
 import { GetApiEndpoint, GetBaseUrl } from "@/app.config";
+import { ClearUser } from "@/app/(global methods)/User";
 
 
 async function GetProducts(pageNumber = 1 , pageSize = 3, orderBy = "PriceAsc" ){
@@ -62,7 +63,7 @@ export function FilterSection({...props}){
         <div className={`flex ${style}`}>
 
             <div className="h-full top-0 w-64 p-5 mt-20 flex-shrink-0 border-r-2 
-                max-850:absolute max-850:right-full max-850:mt-0
+                max-850:absolute max-850:right-full max-850:mt-0 
                 ">
                 <MajorTitleSpan text="Filters"/>
 
@@ -91,11 +92,13 @@ export function FilterSection({...props}){
                 <Button text="Apply" color="bg-cornflower_blue-400"/>
                 
             </div>
-            <div className="h-full w-full p-5 bg-cornflower_blue-50 bg-opacity-20 ">
+            <div className="h-full w-full p-5 bg-cornflower_blue-100/25">
                 <SortSection dropdownValue={dropdownValue} setDropdownValue={UpdateOrderByProperty}/>
                 <div className="flex mb-8 space-x-3 850:space-x-0">
                 <Button className="850:hidden min-w-fit h-14 max-md:w-1/5 text-lg mt-8" text="FILTERS" color="bg-cornflower_blue-400" icon={<FilterIcon color="white" fill="none" className="w-5 h-5 inline ml-1 relative"/>}/>
-                <SearchButton text="BROWSE" className={"h-14"} icon={<SearchIcon color="white" className="w-5 h-5 inline ml-1 relative"/>} color="bg-cornflower_blue-400"/>
+                <Button text="BROWSE" onClick={() => ClearUser()} icon={<SearchIcon color="white" className="w-7 h-7 relative my-auto"/>} 
+                    textClassName="uppercase text-lg font-semibold flex gap-1 my-auto" 
+                    className="py-3 px-5 w-full max-xs:w-2/3 max-xs:px-2 justify-center flex mt-8" height="h-14" color="bg-cornflower_blue-400"/>
                 </div>
 
                 <Products setProductSet={UpdateProductSet} productSet={...productSet} currentPage={currentPage} setMaxPage={UpdateMaxPage} setCurrentPage={ChangePage} maxPage={maxPage} orderBy={dropdownValue}/>
@@ -127,7 +130,6 @@ export function ListMember({...props}){
 
 export function SortSection({...props}){
     const [priceRange, setPriceRange] = useState([0, 10000])
-
     return(
         <div className="grid grid-rows-2 grid-flow-col gap-x-5 columns-3 border-b-2 border-indigo-50 border-solid
                         max-lg:grid-rows-2 max-lg:grid-cols-2
@@ -230,7 +232,7 @@ export function Products({...props}){
         setIsLoading(true)
         let mounted = true
 
-        GetProducts(props.currentPage, 3, props.orderBy).then(product => {
+        GetProducts(props.currentPage, 4, props.orderBy).then(product => {
             if(mounted){
                 let newData = [...product.data]
                 props.setMaxPage(product.lastPage)
@@ -289,23 +291,23 @@ export function Product({...props}){
     //review function to be added
     //favorite button to be added in the top right corner of the product photo
     return(
-            <div className="bg-black-900 opacity-95 w-full h-80">
+            <div className="bg-black-900 opacity-95 w-full h-80 shadow-md shadow-black-900/40">
                 <Link href={`${props.baseUrl}products/${product.id}`}>
                 <div className="w-full bg-black-900 bg-opacity-20 h-48">
                     <img src="https://media.istockphoto.com/id/936307606/vector/red-sliced-onion-watercolor-hand-drawn-illustration-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=q1au5WBcEZKQD15ji-E_6pEKDIwcxX5nXBU54yi5cyc="
-                         className="w-full h-48 object-cover sticky"
+                         className="w-full h-48 object-cover active:opacity-80 sticky transition-all"
                     />
                 </div>
                 </Link>
-                <div className="h-28">
-                    <div className="flex justify-between ">
-                    <div className="h-8 p-2">{product.name}</div>
-                    <div className="p-2">* * * * * </div>
+                <div className="h-28 flex-col">
+                    <div className="flex justify-between w-full">
+                    <div className="h-10 p-2 text-lg inline-block w-full whitespace-nowrap overflow-ellipsis overflow-hidden">{product.name}</div>
+                    
                     </div>
                     
                     <div className="w-full h-6 bg-opacity-95 bg-black-900  p-2 pt-0 pb-1 text-sm">{product.manufacturer.name}</div>
                     <div className="w-full h-12 p-2 pb-0 flex justify-between">
-                        <div className="text-2xl max-lg:text-xl mb-auto mt-auto">{product.price ?? 0}.00 zł</div>
+                        <div className="text-2xl max-lg:text-xl mb-auto mt-auto">{Number(product.price).toFixed(2)} zł</div>
                         <Button className='w-28 max-md:w-28 max-md:text-sm mb-auto mt-auto relative' text="Add to cart" color="bg-cornflower_blue-400"/>
                     </div>
                 </div>

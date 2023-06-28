@@ -1,22 +1,175 @@
 import Link from "next/link"
+import { UserIcon } from "../icons"
+import { useEffect, useRef } from "react"
 
 export function Button({...props}){
     return(
-        <button className="h-10 my-auto ml-5 p-1 px-2 hover:transition-all hover:text-turquoise-50"> {props.label} </button>
+        <button className="h-10 my-auto ml-5 p-1 px-2 hover:transition-all hover:text-turquoise-50 active:opacity-80"> 
+            {props.label} 
+        </button>
     )
 }
 
 export function ButtonMain({...props}){
     return(
         <Link href={props.url}>
-        <button className="h-10 my-auto ml-5 p-1 px-3 bg-rose-600 bg-turquoise-50 bg-opacity-80 hover:transition-all rounded-md  hover:bg-turquoise-50 hover:bg-opacity-90 " > 
-            Cart 
-            <ShoppingCartSVG className="w-8 h-8 inline ml-2"/> 
+        <button className="h-10 my-auto ml-5 p-1 px-3 bg-rose-600 bg-turquoise-50 bg-opacity-80 rounded-md 
+                           hover:transition-all hover:bg-turquoise-50 hover:bg-opacity-90 
+                           active:opacity-80
+                           " > 
+            {props.label ?? ""} 
+            <ShoppingCartSVG className="w-8 h-8 inline"/> 
         </button>
         </Link>
     )
 }
 
+export function UserShortcut({...props}){
+    return(
+        <div className={`${props.className} flex hover:cursor-pointer`} onClick={props.onClick}>
+            <UserIcon className={`border-white-900 ${props.width ?? "w-10"} ${props.height ?? "h-10"} inline border-4 rounded-full`}/>
+        </div>   
+    )
+}
+
+export function UserPanel({...props}){
+    let userPanelRef = useRef()
+
+    useEffect(() => {
+
+        let handler = (event)=>{
+            if (!userPanelRef.current?.contains(event.target)){
+                props.setVisible(false)
+            }
+            props.checkUser()
+        }
+
+        document.addEventListener("mousedown", handler)
+
+        return () => {
+            document.removeEventListener("mousedown", handler)
+        }
+   })
+
+    return props.visible ? (
+        <div className="bg-black-900 w-80 inline-block absolute top-16 right-2 text-lg border-4 border-white-900/25 rounded-xl max-md:hidden" 
+            ref={userPanelRef}>
+                        
+                        <div className="flex bg-white-900/10 w-full justify-between p-7 rounded-xl border-black-900">
+                            <UserShortcut width="w-8" height="h-8"/>
+                            <div>
+                                {props.user.email ?? "Guest"}
+                            </div>
+                        </div>
+                        <div className="p-7 flex flex-col gap-5">
+                            {props.user ? <UserOptions onClick={props.onClick} roles={props.user.roles} signOut={props.signOut}/> : <GuestOptions onClick={props.onClick}/>}
+                        </div>
+                    </div>
+    ) : <></>
+}
+
+function GuestOptions({...props}){
+    return(
+        <>
+            <Link href={"login"}>
+                <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all
+                               hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                active:opacity-80
+                                " onClick={props.onClick}>
+                    Sign In
+                </div>
+            </Link>
+            <Link href={"register"}>
+                <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all 
+                                hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                active:opacity-80
+                                " onClick={() => {props.onClick;}}>
+                    Sign Up
+                </div>
+            </Link>
+        </>
+    )
+}
+
+function UserOptions({...props}){
+    return(
+        <>
+            {
+            props.roles.includes("Admin") ?
+            <Link href={"login"}>
+                <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all
+                               hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                active:opacity-80
+                                " onClick={props.onClick}>
+                    Admin Panel
+                </div>
+            </Link> : <></>
+            }
+            <Link href={"login"}>
+                <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all
+                               hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                active:opacity-80
+                                " onClick={props.onClick}>
+                    My Profile
+                </div>
+            </Link>
+            <Link href={"register"}>
+                <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all 
+                                hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                active:opacity-80
+                                " onClick={props.onClick}>
+                    My Orders
+                </div>
+            </Link>
+            <Link href={"/"}>
+                <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all 
+                                hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                active:opacity-80
+                                " onClick={() => {props.signOut()}}>
+                    Sign Out
+                </div>
+            </Link>
+        </>
+    )
+}
+
+
+export function MobilePanel({...props}){
+    return props.visible ? (
+        <div className="w-full h-screen max-h-screen overflow-hidden bg-black-900 absolute flex flex-col md:hidden pt-12">
+        <div className="flex flex-col relative p-10 text-3xl gap-12 font-semibold">
+        <Link href={"login"}>
+                            <div className="bg-black-900 rounded-md p-4 border-2  mb-4 opacity-90 transition-all text-center
+                                            hover:cursor-pointer hover:border-turquoise-50 hover:opacity-100 hover:border-collapse
+                                            hover:bg-gradient-to-r from-cornflower_blue-500 to-turquoise-50
+                                            active:opacity-80 
+                                            " onClick={props.onClick}>
+                                Sign In
+                            </div>
+        </Link>
+
+        <Link href={"register"}>
+                            <div className="bg-black-900 rounded-md p-4 border-2 opacity-90 transition-all text-center
+                                            hover:cursor-pointer hover:border-turquoise-50 hover:opacity-100 hover:border-collapse
+                                            hover:bg-gradient-to-r from-cornflower_blue-500 to-turquoise-50
+                                            active:opacity-80
+                                            " onClick={props.onClick}>
+                                Sign Up
+                            </div>
+        </Link>
+
+        <div className="bg-black-900 rounded-md p-4 border-2 opacity-90 transition-all text-center
+                                            hover:cursor-pointer hover:border-turquoise-50 hover:opacity-100 hover:border-collapse
+                                            hover:bg-gradient-to-r from-cornflower_blue-500 to-turquoise-50
+                                            active:opacity-80
+                                            " onClick={props.onClick}>
+                                Cart
+        </div>
+
+        </div>
+        </div>
+    ) : <></>
+}
 
 export function SvgComponent({...props})
 {
