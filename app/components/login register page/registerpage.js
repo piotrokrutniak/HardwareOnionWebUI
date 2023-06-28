@@ -43,15 +43,15 @@ export default function RegisterForm(){
     //register api method to be added to api folder and mapped onyo the states
 
     return formSubmitted == false ? (
-        <div className="relative min-w-fit w-1/2 max-sm:w-full bg-black-900 m-auto top-20 p-8
-                        max-[480px]:h-full">
+        <div className="relative min-w-fit max-w-3xl max-sm:w-full bg-black-900 m-auto top-20 p-8
+                        max-md:h-full shadow-md shadow-black-900/40">
             <div className="text-4xl font-semibold border-b-2 pb-4 border-white-900/70 mb-5 ">Sign Up</div>
-            <div className="mb-5">
-                <TextBox inputStyle="text-black-900" onChange={setEmail} label="Email" placeHolder="email@example.com"/>
-                <TextBox inputStyle="text-black-900" onChange={setFirstName} label="First Name" placeHolder="email@example.com"/>
-                <TextBox inputStyle="text-black-900" onChange={setLastName} label="Last Name" placeHolder="email@example.com"/>
-                <TextBox inputStyle="text-black-900" onChange={setPassword} label="Password" type="password" placeHolder="password"/>
-                <TextBox inputStyle="text-black-900" onChange={setConfirmPassword} label="Confirm Password" type="password" placeHolder="password"/>
+            <div className="mb-8 flex flex-col gap-6">
+                <TextBox inputStyle="text-black-900 rounded-md" onChange={setEmail} labelVisible={true} label="Email" placeHolder="email@example.com"/>
+                <TextBox inputStyle="text-black-900 rounded-md" onChange={setFirstName} labelVisible={true} label="First Name" placeHolder="email@example.com"/>
+                <TextBox inputStyle="text-black-900 rounded-md" onChange={setLastName} labelVisible={true} label="Last Name" placeHolder="email@example.com"/>
+                <TextBox inputStyle="text-black-900 rounded-md" onChange={setPassword} labelVisible={true} label="Password" type="password" placeHolder="password"/>
+                <TextBox inputStyle="text-black-900 rounded-md" onChange={setConfirmPassword} labelVisible={true} label="Confirm Password" type="password" placeHolder="password"/>
             </div>
             {wrongRequest[0] == true && <Alert message={wrongRequest[1]}/>}
             <div className="flex gap-2 justify-between max-[480px]:flex-col">

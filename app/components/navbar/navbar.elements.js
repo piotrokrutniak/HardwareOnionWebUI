@@ -62,7 +62,7 @@ export function UserPanel({...props}){
                             </div>
                         </div>
                         <div className="p-7 flex flex-col gap-5">
-                            {props.user ? <UserOptions onClick={props.onClick} signOut={props.signOut}/> : <GuestOptions onClick={props.onClick}/>}
+                            {props.user ? <UserOptions onClick={props.onClick} roles={props.user.roles} signOut={props.signOut}/> : <GuestOptions onClick={props.onClick}/>}
                         </div>
                     </div>
     ) : <></>
@@ -94,6 +94,17 @@ function GuestOptions({...props}){
 function UserOptions({...props}){
     return(
         <>
+            {
+            props.roles.includes("Admin") ?
+            <Link href={"login"}>
+                <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all
+                               hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
+                                active:opacity-80
+                                " onClick={props.onClick}>
+                    Admin Panel
+                </div>
+            </Link> : <></>
+            }
             <Link href={"login"}>
                 <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all
                                hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100

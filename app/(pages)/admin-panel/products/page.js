@@ -50,7 +50,7 @@ export default function AdminProducts(){
                 </div>
                 <Button text="ADD NEW" icon={<PlusIcon className="w-7 h-7 relative my-auto"/>} onClick={() => router.push(`admin-panel/products/add`)}
                     textClassName="uppercase text-lg font-semibold flex gap-2 my-auto" 
-                    className="py-3 px-5 w-full max-xs:w-2/3 max-xs:px-2 justify-center flex" height="h-14" color="bg-cornflower_blue-400"/>
+                    className="py-3 px-5 w-full max-xs:px-2 justify-center flex" height="h-14" color="bg-cornflower_blue-400"/>
                 
             </div>
             <ItemCards setPopupActive={setPopupActive} popupActive={popupActive} 

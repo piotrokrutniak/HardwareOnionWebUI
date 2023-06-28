@@ -9,6 +9,7 @@ import Button from "@/app/components/ui components/button"
 import { Dropdown, SortDropdown } from "@/app/components/ui components/dropdown"
 import Spinner from "@/app/components/ui components/spinner"
 import TextBox from "@/app/components/ui components/textbox"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 export function UpdateProductForm({...props}){
@@ -22,6 +23,7 @@ export function UpdateProductForm({...props}){
     const [displayExpand, setDisplayExpand] = useState(false);
     const [isProductTypeLoading, setIsProductTypeLoading] = useState(false);
     const [isManufacturersLoading, setIsManufacturersLoading] = useState(false);
+    const router = useRouter()
 
     const intRegex = new RegExp("^[0-9]*$", "gm")
     const decimalRegex = new RegExp("^[0-9]*\\.[0-9]{0,2}$", "gm")
@@ -171,7 +173,7 @@ export function UpdateProductForm({...props}){
                             textClassName="uppercase text-lg font-semibold flex gap-1 my-auto" 
                             className="py-3 px-5 w-full max-xs:px-2 justify-center flex" height="h-14" color="bg-raspberry-500"/>
 
-                        <Button text="DISCARD" icon={<ExitIcon className="w-7 h-7 relative my-auto" fill="white"/>} 
+                        <Button text="DISCARD" icon={<ExitIcon className="w-7 h-7 relative my-auto" fill="white"/>} onClick={() => router.back()}
                             textClassName="uppercase text-lg font-semibold flex gap-1 my-auto" 
                             className="py-3 px-5 w-full max-xs:px-2 justify-center flex" height="h-14" color="bg-cornflower_blue-100/25 hover:bg-cornflower_blue-100/40"/>
                     </div>

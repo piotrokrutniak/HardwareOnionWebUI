@@ -49,12 +49,12 @@ export default function LoginForm(){
 
 
     return(
-        <div className="relative min-w-fit w-1/2 max-sm:w-full bg-black-900 m-auto top-20 p-8
-                        max-[480px]:h-full">
-            <div className="text-4xl font-semibold border-b-2 pb-4 border-white-900/70 mb-5 ">Login</div>
-            <div className="mb-5 flex flex-col gap-3">
-                <TextBox onChange={setEmail} inputStyle="text-black-900 rounded-md" label="Email" placeHolder="email@example.com"/>
-                <TextBox onChange={setPassword} inputStyle="text-black-900 rounded-md" label="Password" type="password" placeHolder="password"/>
+        <div className="relative min-w-fit max-w-3xl max-sm:w-full bg-black-900 m-auto top-20 p-8
+                        max-md:h-full shadow-md shadow-black-900/40">
+            <div className="text-4xl font-semibold border-b-2 pb-4 border-white-900/70 mb-5">Login</div>
+            <div className="mb-8 flex flex-col gap-6">
+                <TextBox onChange={setEmail} inputStyle="text-black-900 rounded-md" labelVisible={true} label="Email" placeHolder="email@example.com"/>
+                <TextBox onChange={setPassword} inputStyle="text-black-900 rounded-md" labelVisible={true} label="Password" type="password" placeHolder="password"/>
             </div>
             {requestSent[0] == true && <Alert message={requestSent[2]}/>}
             {requestSent[1] == true && <LoadingAlert color="text-sap_green-50" message={requestSent[2]}/>}

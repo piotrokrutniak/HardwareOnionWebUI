@@ -299,15 +299,15 @@ export function Product({...props}){
                     />
                 </div>
                 </Link>
-                <div className="h-28">
-                    <div className="flex justify-between ">
-                    <div className="h-8 p-2">{product.name}</div>
-                    <div className="p-2">* * * * * </div>
+                <div className="h-28 flex-col">
+                    <div className="flex justify-between w-full">
+                    <div className="h-10 p-2 text-lg inline-block w-full whitespace-nowrap overflow-ellipsis overflow-hidden">{product.name}</div>
+                    
                     </div>
                     
                     <div className="w-full h-6 bg-opacity-95 bg-black-900  p-2 pt-0 pb-1 text-sm">{product.manufacturer.name}</div>
                     <div className="w-full h-12 p-2 pb-0 flex justify-between">
-                        <div className="text-2xl max-lg:text-xl mb-auto mt-auto">{product.price ?? 0}.00 zł</div>
+                        <div className="text-2xl max-lg:text-xl mb-auto mt-auto">{Number(product.price).toFixed(2)} zł</div>
                         <Button className='w-28 max-md:w-28 max-md:text-sm mb-auto mt-auto relative' text="Add to cart" color="bg-cornflower_blue-400"/>
                     </div>
                 </div>

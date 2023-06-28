@@ -63,13 +63,13 @@ export function ProductInfoSection({...props}){
                 <div id="photo-slider" className="bg-black-900 h-24 w-96 mt-3 mr-3 flex-shrink-0 max-lg:hidden"></div>
                 <div id="button-section" className="bg-black-900 h-24 w-full mt-3 flex justify-between p-3 gap-3 font-semibold"> 
                     <div className="flex flex-col font-normal"> 
-                        <div className="text-xl text-raspberry-600 line-through"> {props.productData.price} </div>
-                        <div className="text-4xl max-xs:text-2xl"> {props.productData.price} </div>
+                        <div className="text-xl text-raspberry-600 line-through"> {Number(props.productData.price).toFixed(2)} </div>
+                        <div className="text-4xl max-xs:text-2xl"> {Number(props.productData.price).toFixed(2)} zł </div>
                     </div>
                     <div className="flex flex-row-reverse gap-3">
-                        <Button text="BUY NOW" height={""} className="text-xl text-black-900 p-8 px-8 max-xs:px-4 max-xs:text-lg" textClassName="-top-1/2 -translate-y-1/2"
+                        <Button text="BUY NOW" height={""} className="text-xl text-black-900 p-8 px-8 max-xs:px-4 max-xs:text-lg" textClassName="-top-1/2 -translate-y-1/2"/> 
+                        <Button height={""} className="text-xl text-black-900 p-8 px-8 max-xs:px-4 max-xs:text-lg" textClassName="-top-1/2 -translate-y-1/2"
                                 icon={<ShoppingCartSVG color="black" className="w-7 h-7 inline ml-1 relative"/>}/> 
-                        <Button text="CART" height={""} className="text-xl text-black-900 p-8 px-8 max-xs:px-4 max-xs:text-lg" textClassName="-top-1/2 -translate-y-1/2"/> 
                     </div>
                 </div>
                 </div>

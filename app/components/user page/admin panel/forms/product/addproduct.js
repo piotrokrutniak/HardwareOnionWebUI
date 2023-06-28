@@ -4,6 +4,7 @@ import GetProductDetails from "@/app/(api methods)/GetProductDetails"
 import GetProductTypes from "@/app/(api methods)/GetProductTypes"
 import PostProductsDetails from "@/app/(api methods)/PostDetails"
 import PostProduct from "@/app/(api methods)/PostProduct"
+import { GoBack } from "@/app/(global methods)/Router"
 import { GetUser } from "@/app/(global methods)/User"
 import { ExitIcon, ExpandIcon, PlusIcon, ShoppingCartSVG, TrashIcon } from "@/app/components/icons"
 import Button from "@/app/components/ui components/button"
@@ -12,6 +13,7 @@ import Spinner from "@/app/components/ui components/spinner"
 import TextArea from "@/app/components/ui components/textarea"
 import TextBox from "@/app/components/ui components/textbox"
 import ValidatedTextBox from "@/app/components/ui components/textboxvalidated"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 export function AddProductForm({...props}){
@@ -25,10 +27,11 @@ export function AddProductForm({...props}){
     const [displayExpand, setDisplayExpand] = useState(false);
     const [isProductTypeLoading, setIsProductTypeLoading] = useState(false);
     const [isManufacturersLoading, setIsManufacturersLoading] = useState(false);
+    const router = useRouter()
 
     const intRegex = new RegExp("^[0-9]*$", "gm")
     const decimalRegex = new RegExp("^[0-9]*\\.[0-9]{0,2}$", "gm")
-    
+
     const [productData, setProductData] = useState({
         id: undefined,
         name: "",
@@ -85,8 +88,6 @@ export function AddProductForm({...props}){
     function UpdateProductDesc(newValue){
         return setProductData({...productData, description: newValue})
     }
-
-    
     
     useEffect(() => {
         setIsProductTypeLoading(true)
@@ -184,7 +185,7 @@ export function AddProductForm({...props}){
                             textClassName="uppercase text-lg font-semibold flex gap-1 my-auto" 
                             className="py-3 px-5 w-full max-xs:px-2 justify-center flex" height="h-14" color="bg-sap_green-50/50 hover:bg-sap_green-50/60"/>
 
-                        <Button text="DISCARD" icon={<ExitIcon className="w-7 h-7 relative my-auto" fill="white"/>} 
+                        <Button text="DISCARD" icon={<ExitIcon className="w-7 h-7 relative my-auto" fill="white"/>} onClick={() => router.back()}
                             textClassName="uppercase text-lg font-semibold flex gap-1 my-auto" 
                             className="py-3 px-5 w-full max-xs:px-2 justify-center flex" height="h-14" color="bg-cornflower_blue-100/25 hover:bg-cornflower_blue-100/40"/>
                     </div>
