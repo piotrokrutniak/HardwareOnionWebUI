@@ -1,8 +1,10 @@
 import Link from "next/link"
-import { UserIcon } from "../icons"
+import { ArrowLeftIcon, UserIcon } from "../icons"
 import { useEffect, useRef } from "react"
+import TextBox from "../ui components/textbox"
+import Button from "../ui components/button"
 
-export function Button({...props}){
+export function NavbarButton({...props}){
     return(
         <button className="h-10 my-auto ml-5 p-1 px-2 hover:transition-all hover:text-turquoise-50 active:opacity-80"> 
             {props.label} 
@@ -12,15 +14,14 @@ export function Button({...props}){
 
 export function ButtonMain({...props}){
     return(
-        <Link href={props.url}>
         <button className="h-10 my-auto ml-5 p-1 px-3 bg-rose-600 bg-turquoise-50 bg-opacity-80 rounded-md 
                            hover:transition-all hover:bg-turquoise-50 hover:bg-opacity-90 
-                           active:opacity-80
-                           " > 
+                           active:opacity-80 flex justify-between items-center gap-2"
+                           onClick={() => props.onClick()}> 
             {props.label ?? ""} 
             <ShoppingCartSVG className="w-8 h-8 inline"/> 
+            <ArrowLeftIcon className={`${!props.displayBasket ? "rotate-90" : "-rotate-90"} h-6 w-4 transition-all cursor-pointer`}/>
         </button>
-        </Link>
     )
 }
 
@@ -52,10 +53,10 @@ export function UserPanel({...props}){
    })
 
     return props.visible ? (
-        <div className="bg-black-900 w-80 inline-block absolute top-16 right-2 text-lg border-4 border-white-900/25 rounded-xl max-md:hidden" 
+        <div className="bg-black-900 w-80 inline-block absolute top-16 right-2 text-lg border-4 border-white-900/25 rounded-xl max-md:hidden shadow-md shadow-black-900/30" 
             ref={userPanelRef}>
                         
-                        <div className="flex bg-white-900/10 w-full justify-between p-7 rounded-xl border-black-900">
+                        <div className="flex bg-cornflower_blue-100/10 w-full justify-between p-7 rounded-xl border-black-900">
                             <UserShortcut width="w-8" height="h-8"/>
                             <div>
                                 {props.user.email ?? "Guest"}
@@ -96,7 +97,7 @@ function UserOptions({...props}){
         <>
             {
             props.roles.includes("Admin") ?
-            <Link href={"login"}>
+            <Link href={"admin-panel"}>
                 <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all
                                hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
                                 active:opacity-80
@@ -130,6 +131,85 @@ function UserOptions({...props}){
                 </div>
             </Link>
         </>
+    )
+}
+
+
+export function BasketPanel({...props}){
+    let basketPanelRef = useRef()
+
+    useEffect(() => {
+
+        let handler = (event)=>{
+            if (!basketPanelRef.current?.contains(event.target)){
+                props.setVisible(false)
+            }
+            props.checkUser()
+        }
+
+        document.addEventListener("mousedown", handler)
+
+        return () => {
+            document.removeEventListener("mousedown", handler)
+        }
+   })
+    return props.visible ? (
+        <div className="bg-black-900 w-96 inline-block absolute top-16 right-16 text-lg border-white-900/25 rounded-xl max-md:hidden"
+            ref={basketPanelRef}>
+            <div className="flex bg-cornflower_blue-50/10 w-full justify-between p-7 rounded-xl rounded-b-none border-black-900">
+            Basket
+            </div>
+            
+            <BasketItem/>
+            <BasketItem/>
+            <BasketItem/>
+            <BasketItem/>
+
+
+            <div className="flex font-normal bg-cornflower_blue-50/10 w-full justify-between items-center px-4 py-5 rounded-xl rounded-t-none border-black-900">
+                <div><span className="font-semibold">Total:</span> 5599.96 zł</div>
+                <Button textClassName="text-black-900 font-semibold" text="CHECKOUT"/>
+            </div>
+        </div>
+    ) : <></>
+}
+
+export function BasketItem(){
+    return(
+        <div className="flex justify-between p-3 border-b-2 border-b-white-900/20 hover:bg-cornflower_blue-50/20">
+                <div className="flex flex-col">
+                    <div>
+                        RTX 4070
+                    </div>
+                    <div className="font-thin text-base">
+                        1399.99 zł
+                    </div>
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="w-14">
+                        <TextBox inputStyle="text-white-900 text-center rounded-md w-10 bg-cornflower_blue-50/10" wrapperStyle="w-10"/>
+                    </div>
+
+                    <div className="flex gap-1">
+                    <div className="font-thin text-base">
+                        {/** Turn into a button */}
+                        <div className="rounded-lg flex w-10 h-10 cursor-pointer bg-cornflower_blue-50/20 active:bg-cornflower_blue-50/20 hover:bg-cornflower_blue-50/30 active:opacity-80
+                            text-3xl items-center justify-center font-semibold select-none">
+                            <div className="h-10">+</div>
+                        </div>
+                        <div></div>
+                    </div>
+                    <div className="font-thin text-base">
+                        {/** Turn into a button */}
+                        <div className="rounded-lg flex w-10 h-10 cursor-pointer bg-cornflower_blue-50/20 active:bg-cornflower_blue-50/20 hover:bg-cornflower_blue-50/30 active:opacity-80
+                            text-3xl items-center justify-center font-semibold select-none">
+                            <div className="h-10">-</div>
+                        </div>
+                        <div></div>
+                    </div>
+                    </div>
+                </div>
+            </div>
     )
 }
 

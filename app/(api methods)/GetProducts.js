@@ -1,6 +1,6 @@
 import { GetApiEndpoint } from '@/app.config';
 
-export default async function GetProducts(pageNumber = 1 , pageSize = 3, orderBy = "PriceAsc" ){
+export default async function GetProducts(pageNumber = 1 , pageSize = 12, orderBy = "PriceAsc" ){
     const apiEndpoint = GetApiEndpoint()
     console.log(apiEndpoint)
     let response = await fetch(`${apiEndpoint}api/v1/product?PageNumber=${pageNumber}&PageSize=${pageSize}&OrderBy=${orderBy}`,

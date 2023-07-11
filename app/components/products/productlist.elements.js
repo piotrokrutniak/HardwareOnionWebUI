@@ -10,10 +10,10 @@ import { GetApiEndpoint, GetBaseUrl } from "@/app.config";
 import { ClearUser } from "@/app/(global methods)/User";
 
 
-async function GetProducts(pageNumber = 1 , pageSize = 3, orderBy = "PriceAsc" ){
+async function GetProducts(pageNumber = 1 , pageSize = 12, orderBy = "PriceAsc" ){
     const apiEndpoint = GetApiEndpoint()
     console.log(apiEndpoint)
-    let response = await fetch(`${apiEndpoint}api/v1/product?PageNumber=${pageNumber}&PageSize=${pageSize}&OrderBy=${orderBy}`,
+    let response = await fetch(`${apiEndpoint}api/v1/Product?PageNumber=${pageNumber}&PageSize=${pageSize}&OrderBy=${orderBy}`,
                         {
                             method: "GET",
                             mode: 'cors',
@@ -232,7 +232,7 @@ export function Products({...props}){
         setIsLoading(true)
         let mounted = true
 
-        GetProducts(props.currentPage, 4, props.orderBy).then(product => {
+        GetProducts(props.currentPage, 12, props.orderBy).then(product => {
             if(mounted){
                 let newData = [...product.data]
                 props.setMaxPage(product.lastPage)
