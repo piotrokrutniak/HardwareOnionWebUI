@@ -8,7 +8,7 @@ import PostAuthenticate from "@/app/(api methods)/PostAuthenticate";
 import Cookies from "universal-cookie";
 import Spinner from "../ui components/spinner";
 import { useRouter } from 'next/navigation'
-import { ClearUser } from "@/app/(global methods)/User";
+import { ClearUser, GetUser } from "@/app/(global methods)/User";
 
 export default function LoginForm(){
     const [formSubmitted, setFormSubmitted] = useState(false)
@@ -44,7 +44,7 @@ export default function LoginForm(){
             {
                 setRequestSent([true, false, `${response.Message ?? "An unexpected error ocurred."}`])
             }
-        })
+        }).then(GetUser())
     }
 
 

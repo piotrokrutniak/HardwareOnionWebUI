@@ -8,6 +8,7 @@ import Spinner from "../ui components/spinner";
 import { ArrowRightIcon, ArrowLeftIcon, ArrowDoubleLeftIcon, ArrowDoubleRightIcon } from "../icons";
 import { GetApiEndpoint, GetBaseUrl } from "@/app.config";
 import { ClearUser } from "@/app/(global methods)/User";
+import { AddOrUpdateToBasket } from "@/app/(global methods)/Basket";
 
 
 async function GetProducts(pageNumber = 1 , pageSize = 12, orderBy = "PriceAsc" ){
@@ -288,6 +289,17 @@ export function Products({...props}){
 export function Product({...props}){
 
     let product = props.productData
+
+    let item = 
+    {
+        "id": 0,
+        "productId": product.id,
+        "productName": `${product.manufacturer.name} ${product.name} `,
+        "quantity": 1,
+        "price": product.price,
+        "orderId": 0,
+    }
+
     //review function to be added
     //favorite button to be added in the top right corner of the product photo
     return(
@@ -308,7 +320,8 @@ export function Product({...props}){
                     <div className="w-full h-6 bg-opacity-95 bg-black-900  p-2 pt-0 pb-1 text-sm">{product.manufacturer.name}</div>
                     <div className="w-full h-12 p-2 pb-0 flex justify-between">
                         <div className="text-2xl max-lg:text-xl mb-auto mt-auto">{Number(product.price).toFixed(2)} zł</div>
-                        <Button className='w-28 max-md:w-28 max-md:text-sm mb-auto mt-auto relative' text="Add to cart" color="bg-cornflower_blue-400"/>
+                        <Button className='w-28 max-md:w-28 max-md:text-sm mb-auto mt-auto relative' text="Add to cart" color="bg-cornflower_blue-400"
+                            onClick={() => AddOrUpdateToBasket(item)}/>
                     </div>
                 </div>
             </div>

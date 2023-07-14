@@ -5,9 +5,10 @@ import TextBox from "../ui components/textbox"
 import Button from "../ui components/button"
 import { cookies } from "next/dist/client/components/headers"
 import GetOrder from "@/app/(api methods)/GetOrder"
-import GetUserBasket from "@/app/(api methods)/GetUserBasket" 
+//import GetUserBasket from "@/app/(api methods)/GetUserBasket" 
 import PutOrderItem from "@/app/(api methods)/PutOrderItem"
 import ValidatedTextBox from "../ui components/textboxvalidated"
+import { AddOrUpdateToBasket, GetBasket as GetUserBasket } from "@/app/(global methods)/Basket"
 
 export function NavbarButton({...props}){
     return(
@@ -49,7 +50,6 @@ export function UserPanel({...props}){
             }
             props.checkUser()
         }
-
         document.addEventListener("mousedown", handler)
 
         return () => {
@@ -58,17 +58,17 @@ export function UserPanel({...props}){
    })
 
     return props.visible ? (
-        <div className="bg-black-900 w-80 inline-block absolute top-16 right-2 text-lg border-4 border-white-900/25 rounded-xl max-md:hidden shadow-md shadow-black-900/30" 
+        <div className="bg-black-900 w-80 inline-block absolute top-16 right-2 text-lg  rounded-xl  max-md:hidden shadow-md shadow-black-900/30" 
             ref={userPanelRef}>
                         
-                        <div className="flex bg-cornflower_blue-100/10 w-full justify-between p-7 rounded-xl border-black-900">
+                        <div className="flex bg-cornflower_blue-100/10 w-full justify-between p-7 rounded-xl rounded-b-none border-black-900">
                             <UserShortcut width="w-8" height="h-8"/>
                             <div>
                                 {props.user.email ?? "Guest"}
                             </div>
                         </div>
                         <div className="p-7 flex flex-col gap-5">
-                            {props.user ? <UserOptions onClick={props.onClick} roles={props.user.roles} signOut={props.signOut}/> : <GuestOptions onClick={props.onClick}/>}
+                            {props.user ? <UserOptions checkUser={props.checkUser} onClick={props.onClick} roles={props.user.roles} signOut={props.signOut}/> : <GuestOptions onClick={props.onClick}/>}
                         </div>
                     </div>
     ) : <></>
@@ -98,6 +98,7 @@ function GuestOptions({...props}){
 }
 
 function UserOptions({...props}){
+    //props.checkUser()
     return(
         <>
             {
@@ -111,22 +112,22 @@ function UserOptions({...props}){
                 </div>
             </Link> : <></>
             }
-            <Link href={"login"}>
+            {/*<Link href={"login"}>*/}
                 <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all
                                hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
-                                active:opacity-80
+                                active:opacity-80 flex justify-between
                                 " onClick={props.onClick}>
-                    My Profile
+                    <div>My Profile</div> <div className="opacity-25">(inactive)</div>
                 </div>
-            </Link>
-            <Link href={"register"}>
+            {/*</Link>*/}
+            {/*<Link href={"register"}>*/}
                 <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all 
                                 hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
-                                active:opacity-80
+                                active:opacity-80 flex justify-between
                                 " onClick={props.onClick}>
-                    My Orders
+                    <div>My Orders</div> <div className="opacity-25">(inactive)</div>
                 </div>
-            </Link>
+            {/*</Link>*/}
             <Link href={"/"}>
                 <div className="bg-black-900 rounded-md p-2 border-2 opacity-90 transition-all 
                                 hover:cursor-pointer hover:border-turquoise-50 hover:bg-white-900/5 hover:opacity-100
@@ -143,41 +144,40 @@ function UserOptions({...props}){
 export function BasketPanel({...props}){
     let basketPanelRef = useRef()
 
-    const [basketData, setBasketData] = useState([])
+    const [basketData, setBasketData] = useState()
     const [isLoading, setIsLoading] = useState(false);
     const [basketTotal, setBasketTotal] = useState(0.00)
     const [syncBasket, setSyncBasket] = useState(false)
 
-
     function SyncBasket(item){
         let index = basketData.orderItems.findIndex(x => x.id == item.id)
-        console.log(index)
         let stagingBasket = basketData
 
         stagingBasket.orderItems[index] = item
 
-        console.log("triggered")
-        console.log(basketData)
+        //console.log("triggered")
+        //console.log(basketData)
         UpdateBasket(stagingBasket)
     }
 
     function UpdateBasket(data){
         setBasketData(data)
+        //console.log(data)
         let total = 0
         data.orderItems.forEach(x => total += x.price * x.quantity);
 
-        return setBasketTotal(Number(total).toFixed(2))
+        return setBasketTotal(Number(total ?? 0.00).toFixed(2))
     }
 
     useEffect(() => {
         setIsLoading(true)
         let mounted = true
         
-        GetUserBasket("superadmin@gmail.com").then(p => {
+        GetUserBasket().then(p => {
             if(mounted){
                 UpdateBasket(p.data)
             }
-        }).then(setIsLoading(false));
+        }).then(console.log(basketData)).then(setIsLoading(false));
 
         return () => mounted = false;
     }, [props.visible, syncBasket])
@@ -207,7 +207,7 @@ export function BasketPanel({...props}){
             Basket
             </div>
             
-            {basketData ? basketData.orderItems.map(x => 
+            {basketData ? basketData.orderItems.map(x => //to be move to another method Map Items and then show basket items or the basket is empty string
                 <BasketItem SyncBasket={SyncBasket} item={x} productName={x.productName} quantity={x.quantity} price={x.price} id={x.id} orderId={x.orderId} key={x.id}/>) 
                 : "Loading..."}
             <div className="flex font-normal bg-cornflower_blue-50/10 w-full justify-between items-center px-4 py-5 rounded-xl rounded-t-none border-black-900">
@@ -234,18 +234,19 @@ export function BasketItem({...props}){
     function UpdateQuantity(newValue){
         item.quantity = newValue
         setItemQuantity(newValue)
-        PutOrderItem(item)
+        //Create a separate method for +1/-1
+        AddOrUpdateToBasket(item)
         props.SyncBasket(item)
     }
-
+    /*
     useEffect(() => {
         let mounted = true
         
-        PutOrderItem(item)
+        AddOrUpdateToBasket(item)
 
         return () => mounted = false;
     }, [itemQuantity])
-
+    */
     return(
         <div className="flex justify-between p-3 border-b-2 relative border-b-white-900/20 hover:bg-cornflower_blue-50/20">
                 {itemQuantity == 0 && <div className="absolute top-0 left-0 w-full h-full p-3 bg-raspberry-500/80 z-10">The item will be removed from the basket</div> }

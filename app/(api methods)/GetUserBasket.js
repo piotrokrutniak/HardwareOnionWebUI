@@ -1,6 +1,6 @@
 import { GetApiEndpoint } from '@/app.config';
 
-export default async function GetUserBasket(email = "guest%40gmail.com"){
+export default async function GetUserBasket(email){
     const apiEndpoint = GetApiEndpoint()
     //get by user email, first or default ordered by date (latest) with a pending status (basket)
     let response = await fetch(`${apiEndpoint}api/v1/Order/GetBasket/${email}`,
@@ -16,5 +16,6 @@ export default async function GetUserBasket(email = "guest%40gmail.com"){
     )
 
     let body = await response.json()          
+
     return await body
 }
