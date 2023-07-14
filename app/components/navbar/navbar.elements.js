@@ -1,8 +1,13 @@
 import Link from "next/link"
 import { ArrowLeftIcon, UserIcon } from "../icons"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import TextBox from "../ui components/textbox"
 import Button from "../ui components/button"
+import { cookies } from "next/dist/client/components/headers"
+import GetOrder from "@/app/(api methods)/GetOrder"
+import GetUserBasket from "@/app/(api methods)/GetUserBasket" 
+import PutOrderItem from "@/app/(api methods)/PutOrderItem"
+import ValidatedTextBox from "../ui components/textboxvalidated"
 
 export function NavbarButton({...props}){
     return(
@@ -17,7 +22,7 @@ export function ButtonMain({...props}){
         <button className="h-10 my-auto ml-5 p-1 px-3 bg-rose-600 bg-turquoise-50 bg-opacity-80 rounded-md 
                            hover:transition-all hover:bg-turquoise-50 hover:bg-opacity-90 
                            active:opacity-80 flex justify-between items-center gap-2"
-                           onClick={() => props.onClick()}> 
+                           onMouseDown={() => props.onClick()}> 
             {props.label ?? ""} 
             <ShoppingCartSVG className="w-8 h-8 inline"/> 
             <ArrowLeftIcon className={`${!props.displayBasket ? "rotate-90" : "-rotate-90"} h-6 w-4 transition-all cursor-pointer`}/>
@@ -27,7 +32,7 @@ export function ButtonMain({...props}){
 
 export function UserShortcut({...props}){
     return(
-        <div className={`${props.className} flex hover:cursor-pointer`} onClick={props.onClick}>
+        <div className={`${props.className} flex hover:cursor-pointer`} onMouseDown={props.onClick}>
             <UserIcon className={`border-white-900 ${props.width ?? "w-10"} ${props.height ?? "h-10"} inline border-4 rounded-full`}/>
         </div>   
     )
@@ -138,7 +143,48 @@ function UserOptions({...props}){
 export function BasketPanel({...props}){
     let basketPanelRef = useRef()
 
+    const [basketData, setBasketData] = useState([])
+    const [isLoading, setIsLoading] = useState(false);
+    const [basketTotal, setBasketTotal] = useState(0.00)
+    const [syncBasket, setSyncBasket] = useState(false)
+
+
+    function SyncBasket(item){
+        let index = basketData.orderItems.findIndex(x => x.id == item.id)
+        console.log(index)
+        let stagingBasket = basketData
+
+        stagingBasket.orderItems[index] = item
+
+        console.log("triggered")
+        console.log(basketData)
+        UpdateBasket(stagingBasket)
+    }
+
+    function UpdateBasket(data){
+        setBasketData(data)
+        let total = 0
+        data.orderItems.forEach(x => total += x.price * x.quantity);
+
+        return setBasketTotal(Number(total).toFixed(2))
+    }
+
     useEffect(() => {
+        setIsLoading(true)
+        let mounted = true
+        
+        GetUserBasket("superadmin@gmail.com").then(p => {
+            if(mounted){
+                UpdateBasket(p.data)
+            }
+        }).then(setIsLoading(false));
+
+        return () => mounted = false;
+    }, [props.visible, syncBasket])
+
+    useEffect(() => {
+        setIsLoading(true)
+        let mounted = true
 
         let handler = (event)=>{
             if (!basketPanelRef.current?.contains(event.target)){
@@ -152,7 +198,8 @@ export function BasketPanel({...props}){
         return () => {
             document.removeEventListener("mousedown", handler)
         }
-   })
+    })
+
     return props.visible ? (
         <div className="bg-black-900 w-96 inline-block absolute top-16 right-16 text-lg border-white-900/25 rounded-xl max-md:hidden"
             ref={basketPanelRef}>
@@ -160,41 +207,66 @@ export function BasketPanel({...props}){
             Basket
             </div>
             
-            <BasketItem/>
-            <BasketItem/>
-            <BasketItem/>
-            <BasketItem/>
-
-
+            {basketData ? basketData.orderItems.map(x => 
+                <BasketItem SyncBasket={SyncBasket} item={x} productName={x.productName} quantity={x.quantity} price={x.price} id={x.id} orderId={x.orderId} key={x.id}/>) 
+                : "Loading..."}
             <div className="flex font-normal bg-cornflower_blue-50/10 w-full justify-between items-center px-4 py-5 rounded-xl rounded-t-none border-black-900">
-                <div><span className="font-semibold">Total:</span> 5599.96 zł</div>
+                <div><span className="font-semibold">Total:</span> {basketTotal} zł</div>
                 <Button textClassName="text-black-900 font-semibold" text="CHECKOUT"/>
             </div>
         </div>
     ) : <></>
 }
 
-export function BasketItem(){
+export function BasketItem({...props}){
+    const [itemQuantity, setItemQuantity] = useState(props.item.quantity)
+
+    let item = 
+    {
+        "productId": props.item.productId,
+        "productName": props.item.productName,
+        "quantity": itemQuantity,
+        "price": props.item.price,
+        "orderId": props.item.orderId,
+        "id": props.id
+    }
+
+    function UpdateQuantity(newValue){
+        item.quantity = newValue
+        setItemQuantity(newValue)
+        PutOrderItem(item)
+        props.SyncBasket(item)
+    }
+
+    useEffect(() => {
+        let mounted = true
+        
+        PutOrderItem(item)
+
+        return () => mounted = false;
+    }, [itemQuantity])
+
     return(
-        <div className="flex justify-between p-3 border-b-2 border-b-white-900/20 hover:bg-cornflower_blue-50/20">
-                <div className="flex flex-col">
-                    <div>
-                        RTX 4070
+        <div className="flex justify-between p-3 border-b-2 relative border-b-white-900/20 hover:bg-cornflower_blue-50/20">
+                {itemQuantity == 0 && <div className="absolute top-0 left-0 w-full h-full p-3 bg-raspberry-500/80 z-10">The item will be removed from the basket</div> }
+                <div className="flex flex-col w-full">
+                    <div className="relative inline-block w-full whitespace-nowrap overflow-ellipsis overflow-hidden">
+                        {props.productName}
                     </div>
                     <div className="font-thin text-base">
-                        1399.99 zł
+                        {props.price} zł
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-14">
-                        <TextBox inputStyle="text-white-900 text-center rounded-md w-10 bg-cornflower_blue-50/10" wrapperStyle="w-10"/>
+                        {/*onChange PUT the order quantity using id*/}
+                        <ValidatedTextBox id={props.id} value={itemQuantity} onChange={UpdateQuantity} inputStyle="text-white-900 text-center rounded-md w-10 bg-cornflower_blue-50/10" wrapperStyle="w-10"/>
                     </div>
-
                     <div className="flex gap-1">
                     <div className="font-thin text-base">
                         {/** Turn into a button */}
                         <div className="rounded-lg flex w-10 h-10 cursor-pointer bg-cornflower_blue-50/20 active:bg-cornflower_blue-50/20 hover:bg-cornflower_blue-50/30 active:opacity-80
-                            text-3xl items-center justify-center font-semibold select-none">
+                            text-3xl items-center justify-center font-semibold select-none" onClick={() => UpdateQuantity(itemQuantity + 1)}>
                             <div className="h-10">+</div>
                         </div>
                         <div></div>
@@ -202,7 +274,7 @@ export function BasketItem(){
                     <div className="font-thin text-base">
                         {/** Turn into a button */}
                         <div className="rounded-lg flex w-10 h-10 cursor-pointer bg-cornflower_blue-50/20 active:bg-cornflower_blue-50/20 hover:bg-cornflower_blue-50/30 active:opacity-80
-                            text-3xl items-center justify-center font-semibold select-none">
+                            text-3xl items-center justify-center font-semibold select-none" onClick={() => UpdateQuantity(itemQuantity - 1)}>
                             <div className="h-10">-</div>
                         </div>
                         <div></div>

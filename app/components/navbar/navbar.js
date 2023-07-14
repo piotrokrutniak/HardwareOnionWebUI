@@ -9,12 +9,12 @@ import { useEffect, useRef, useState } from "react";
 import { ClearUser, GetUser } from "@/app/(global methods)/User";
 
 export default function NavBar(){
-    const [visible, setVisible] = useState(false)
+    const [visible, setUserPanelVisible] = useState(false)
     const [mobileVisible, setMobileVisible] = useState(false)
-    const [basketVisible, setBasketVisible] = useState(true)
+    const [basketVisible, setBasketVisible] = useState(false)
 
     const [user, setUser] = useState(GetUser())
-
+    
     function SignOut(){
         ClearUser()
         return setUser(false)
@@ -24,8 +24,9 @@ export default function NavBar(){
         setUser(GetUser())
     }
 
-    function Toggle(){
-        return setVisible(!visible)
+    function ToggleUserPanel(){
+        setBasketVisible(false)
+        return setUserPanelVisible(!visible)
     }
 
     function ToggleMobile(){
@@ -33,12 +34,13 @@ export default function NavBar(){
     }
 
     function ToggleBasket(){
+        setUserPanelVisible(false)
         return setBasketVisible(!basketVisible)
     }
 
 
     function HandleRedirection(){
-        return setVisible(false), setMobileVisible(false), setBasketVisible(false)
+        return setUserPanelVisible(false), setMobileVisible(false), setBasketVisible(false)
     }
     return(
         <nav className="sticky top-0 z-50 h-14 max-w-qhd m-auto bg-black-900">
@@ -53,7 +55,7 @@ export default function NavBar(){
                     <NavbarButton label="Products"/>
                     <NavbarButton label="Deals"/>
                     <ButtonMain url="/" onClick={ToggleBasket} displayBasket={basketVisible} label=""/>
-                    <UserShortcut className="ml-4 active:opacity-80" onClick={Toggle}/>
+                    <UserShortcut className="ml-4 active:opacity-80" onClick={ToggleUserPanel}/>
                 </div>
                 <div className="h-10 w-10 md:hidden hover:cursor-pointer active:opacity-80 transition-all" onClick={ToggleMobile}>
 
@@ -62,8 +64,8 @@ export default function NavBar(){
                     <HamburgerIcon className="w-14 h-14 mb-auto mt-auto cursor-pointer"/>
                     }
                 </div>
-                <UserPanel user={user ?? undefined} visible={visible} checkUser={CheckUser} onClick={HandleRedirection} signOut={SignOut} setVisible={setVisible}/>
-                <BasketPanel visible={basketVisible} onClick={HandleRedirection} setVisible={setBasketVisible}/>
+                <UserPanel user={user ?? undefined} visible={visible} checkUser={CheckUser} onClick={HandleRedirection} signOut={SignOut} setVisible={setUserPanelVisible}/>
+                <BasketPanel visible={basketVisible} onClick={HandleRedirection} checkUser={CheckUser} setVisible={setBasketVisible}/>
                 
             </div>
                 <MobilePanel visible={mobileVisible} onClick={HandleRedirection}/>
