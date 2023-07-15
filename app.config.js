@@ -1,5 +1,5 @@
 const BASE_URL = "http://localhost:3000/";
-const API_ENDPOINT = "https://localhost:9001/"
+const API_ENDPOINT = "http://localhost:45001/"
 
 
 export function GetBaseUrl(){

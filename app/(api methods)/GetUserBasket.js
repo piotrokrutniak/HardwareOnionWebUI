@@ -1,9 +1,9 @@
 import { GetApiEndpoint } from '@/app.config';
 
-export default async function GetProducts(pageNumber = 1 , pageSize = 12, orderBy = "PriceAsc" ){
+export default async function GetUserBasket(email){
     const apiEndpoint = GetApiEndpoint()
-    console.log(apiEndpoint)
-    let response = await fetch(`${apiEndpoint}api/v1/product?PageNumber=${pageNumber}&PageSize=${pageSize}&OrderBy=${orderBy}`,
+    //get by user email, first or default ordered by date (latest) with a pending status (basket)
+    let response = await fetch(`${apiEndpoint}api/v1/Order/GetBasket/${email}`,
                         {
                             method: "GET",
                             mode: 'cors',
@@ -16,5 +16,6 @@ export default async function GetProducts(pageNumber = 1 , pageSize = 12, orderB
     )
 
     let body = await response.json()          
+
     return await body
 }
