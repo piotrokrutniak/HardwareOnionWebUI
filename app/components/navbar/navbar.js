@@ -52,7 +52,9 @@ export default function NavBar(){
                     </Link>
                 </div>
                 <div className="h-10 my-auto font-normal max-md:hidden flex">
-                    <NavbarButton label="Products"/>
+                    <Link href={'/'}>
+                        <NavbarButton label="Products"/>
+                    </Link>
                     <NavbarButton label="Deals"/>
                     <ButtonMain url="/" onClick={ToggleBasket} displayBasket={basketVisible} label=""/>
                     <UserShortcut className="ml-4 active:opacity-80" onClick={ToggleUserPanel}/>
